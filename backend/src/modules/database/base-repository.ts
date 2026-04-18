@@ -19,7 +19,7 @@ export abstract class BaseRepository<T extends object> {
     return this.model.findById(id).lean().exec();
   }
 
-  async find(options: IQueryOptions<T> = {}): Promise<T[]> {
+  async getMany(options: IQueryOptions<T> = {}): Promise<T[]> {
     const { filter, sort, limit, skip } = mapMongoQueryOptions<T>(options);
 
     return this.model
@@ -31,7 +31,7 @@ export abstract class BaseRepository<T extends object> {
       .exec();
   }
 
-  async findOne(filter: TFilter<T>): Promise<T | null> {
+  async get(filter: TFilter<T>): Promise<T | null> {
     const { filter: mongoFilter } = mapMongoQueryOptions<T>({
       filter,
     });
