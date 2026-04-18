@@ -1,1 +1,1 @@
-export { User, type UserDocument } from "./user.schema";
+export { User, UserSchema, type UserDocument } from "./user.schema";
