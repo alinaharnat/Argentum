@@ -43,7 +43,7 @@ export class AuthService {
       lastName,
     });
 
-    return this.sessionService.createSession(user.id);
+    return this.sessionService.createSession(user._id);
   }
 
   public async login({ email, password }: ILoginParams): Promise<IAuthTokens> {
@@ -62,7 +62,7 @@ export class AuthService {
       throw new UnauthorizedException("Invalid credentials");
     }
 
-    return this.sessionService.createSession(user.id);
+    return this.sessionService.createSession(user._id);
   }
 
   public logout(refreshToken: string): Promise<boolean> {
