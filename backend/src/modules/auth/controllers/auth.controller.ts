@@ -20,6 +20,7 @@ import { RefreshTokenGuard } from "../guards";
 import { SetRefreshTokenCookie, ClearRefreshTokenCookie } from "../decorators";
 import { GetCookie } from "../../common/decorators";
 import { CookieKey } from "../../common/enums";
+import { ThrottlerGuard, Throttle } from "@nestjs/throttler";
 
 @Controller("auth")
 export class AuthController {
@@ -35,6 +36,8 @@ export class AuthController {
     return new RegisterResponseDto(result);
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 3, ttl: 300000 } })
   @Post("login")
   @SetRefreshTokenCookie()
   public async login(@Body() body: LoginRequestDto): Promise<LoginResponseDto> {
