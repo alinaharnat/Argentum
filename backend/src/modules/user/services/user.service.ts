@@ -19,25 +19,7 @@ export class UserService {
     return this.userRepository.getById(id);
   }
 
-  public async setLoginAttempts({ userId, loginAttempts }: ISetLoginAttempts) {
-    await this.userRepository.update(
-      {
-        filter: { [UserField.Id]: userId },
-      },
-      {
-        [UserField.LoginAttempts]: loginAttempts,
-      },
-    );
-  }
-
-  public async setLockUntil({ userId, lockUntil }: ISetLockUntil) {
-    await this.userRepository.update(
-      {
-        filter: { [UserField.Id]: userId },
-      },
-      {
-        [UserField.LockUntil]: lockUntil,
-      },
-    );
+  public createUser(userData: Partial<User>): Promise<User> {
+    return this.userRepository.create(userData);
   }
 }

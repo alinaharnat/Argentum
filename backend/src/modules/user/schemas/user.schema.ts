@@ -11,10 +11,10 @@ export type UserDocument = HydratedDocument<User>;
 export class User {
   @Prop({
     type: Types.ObjectId,
-    alias: "id",
     default: () => new Types.ObjectId(),
+    name: "_id",
   })
-  _id: Types.ObjectId;
+  id: Types.ObjectId;
 
   @Prop({
     required: true,
@@ -22,20 +22,23 @@ export class User {
   })
   email: string;
 
-  @Prop({ required: true, alias: "passwordHash" })
-  password_hash: string;
+  @Prop({
+    required: true,
+    name: "password_hash",
+  })
+  passwordHash: string;
 
-  @Prop({ trim: true, alias: "firstName" })
-  first_name?: string;
+  @Prop({
+    trim: true,
+    name: "first_name",
+  })
+  firstName?: string;
 
-  @Prop({ trim: true, alias: "lastName" })
-  last_name?: string;
-
-  @Prop({ default: 0, alias: "loginAttempts" })
-  login_attempts: number;
-
-  @Prop({ alias: "lockUntil" })
-  lock_until?: Date;
+  @Prop({
+    trim: true,
+    name: "last_name",
+  })
+  lastName?: string;
 
   createdAt: Date;
   updatedAt: Date;

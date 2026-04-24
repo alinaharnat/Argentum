@@ -13,6 +13,10 @@ export class EnvService {
     return this.getValueFromEnv(EnvKey.Port);
   }
 
+  get frontendUrl(): string {
+    return this.getValueFromEnv(EnvKey.FrontendUrl);
+  }
+
   get mongoDbUrl(): string {
     return this.getValueFromEnv(EnvKey.MongoDbUrl);
   }
