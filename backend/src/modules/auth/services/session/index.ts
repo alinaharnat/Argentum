@@ -53,7 +53,7 @@ export class SessionService {
       return false;
     }
 
-    return this.tokenStoreService.removeRefreshToken(refreshTokenFromDb.id);
+    return this.tokenStoreService.removeRefreshToken(refreshTokenFromDb._id);
   }
 
   private async refreshAccessToken(

@@ -8,38 +8,37 @@ export type RefreshTokenDocument = HydratedDocument<RefreshToken>;
 @Schema({
   ...DEFAULT_SCHEMA_OPTIONS,
   collection: "refresh_tokens",
+  id: false,
 })
 export class RefreshToken {
   @Prop({
     type: Types.ObjectId,
-    name: "_id",
     default: () => new Types.ObjectId(),
   })
-  id: Types.ObjectId;
+  _id: Types.ObjectId;
 
   @Prop({
     type: Types.ObjectId,
     ref: User.name,
     required: true,
-    name: "user_id",
+    alias: "user_id",
   })
   userId: Types.ObjectId;
 
   @Prop({
     required: true,
-    name: "token_hash",
+    alias: "token_hash",
   })
   tokenHash: string;
 
   @Prop({
     required: true,
-    name: "jti",
   })
   jti: string;
 
   @Prop({
     required: true,
-    name: "expires_at",
+    alias: "expires_at",
   })
   expiresAt: Date;
 

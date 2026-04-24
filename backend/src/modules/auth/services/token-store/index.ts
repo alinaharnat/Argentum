@@ -32,7 +32,7 @@ export class TokenStoreService {
     refreshTokenId: Types.ObjectId,
   ): Promise<boolean> {
     const deletedDoc = await this.refreshTokenRepository.delete({
-      filter: { id: { eq: refreshTokenId } },
+      filter: { _id: { eq: refreshTokenId } },
     });
 
     return !!deletedDoc;
