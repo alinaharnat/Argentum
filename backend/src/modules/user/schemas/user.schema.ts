@@ -28,6 +28,9 @@ export class User {
   @Prop({ trim: true, alias: "last_name" })
   lastName?: string;
 
+//  @Prop({ required: true, default: 'UAH' }) // Це точно щось зламає тому поки закоментив
+//  currency: string;
+
   createdAt: Date;
   updatedAt: Date;
 }
