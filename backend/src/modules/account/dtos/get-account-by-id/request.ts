@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
-import { IsMongoId } from "class-validator";
+import { Allow } from "class-validator";
 import { Transform } from "class-transformer";
 
 export class GetAccountByIdRequestDto {
-  @IsMongoId()
+  @Allow()
   @Transform(({ value }) => new Types.ObjectId(value))
   id: Types.ObjectId;
 }

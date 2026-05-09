@@ -20,7 +20,9 @@ import {
   GetUserAccountsResponseDto,
 } from "../dtos";
 import { CurrentUserId } from "../../common/decorators";
+import { AccessTokenGuard } from "../../auth/guards";
 
+@UseGuards(AccessTokenGuard)
 @Controller("accounts")
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
@@ -69,6 +71,7 @@ export class AccountController {
     @Param() params: GetAccountByIdRequestDto,
   ): Promise<AccountResponseDto> {
     const { id } = params;
+    console.log(id);
     const account = await this.accountService.getAccountById({
       _id: id,
       userId,

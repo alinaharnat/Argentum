@@ -34,7 +34,7 @@ export class AccountService {
     }
 
     return this.accountRepository.update(
-      { filter: { _id } },
+      { filter: { _id: { eq: _id } } },
       { isActive: false },
     );
   }
@@ -76,7 +76,10 @@ export class AccountService {
       throw new ForbiddenException("User does not own this account");
     }
 
-    const account = await this.accountRepository.get({ _id });
+    const account = await this.accountRepository.get({
+      _id: { eq: _id },
+      isActive: { eq: true },
+    });
 
     if (!account) {
       throw new NotFoundException("Account not found");
@@ -87,7 +90,7 @@ export class AccountService {
 
   public async getUserAccounts(userId: Types.ObjectId): Promise<Account[]> {
     return this.accountRepository.getMany({
-      filter: { userId, isActive: true },
+      filter: { userId: { eq: userId }, isActive: { eq: true } },
     });
   }
 
@@ -96,14 +99,14 @@ export class AccountService {
     userId,
   }: IValidateOwnershipParams): Promise<boolean> {
     const account = await this.accountRepository.get({
-      _id,
-      userId,
+      _id: { eq: _id },
+      userId: { eq: userId },
     });
 
     return !!account;
   }
 
   private validateDataForUpdate(data: Partial<IEditAccountParams>): boolean {
-    return Object.keys(data).length !== 0;
+    return Object.values(data).some((value) => value !== undefined);
   }
 }

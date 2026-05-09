@@ -10,6 +10,9 @@ import { RefreshToken, RefreshTokenSchema } from "./schemas";
 import { CommonModule } from "../common/common.module";
 import { JwtModule } from "@nestjs/jwt";
 import { MongooseModule } from "@nestjs/mongoose/dist/mongoose.module";
+import { AccessTokenGuard } from "./guards";
+import { JwtStrategy } from "./starategies/access";
+import { RefreshTokenStrategy } from "./starategies/refresh";
 
 @Module({
   imports: [
@@ -27,6 +30,8 @@ import { MongooseModule } from "@nestjs/mongoose/dist/mongoose.module";
     TokenStoreService,
     SessionService,
     RefreshTokenRepository,
+    JwtStrategy,
+    RefreshTokenStrategy,
   ],
 })
 export class AuthModule {}

@@ -4,6 +4,7 @@ import { DatabaseModule } from "./database/database.module";
 import { CommonModule } from "./common/common.module";
 import { UserModule } from "./user/user.module";
 import { AuthModule } from "./auth/auth.module";
+import { AccountModule } from "./account/account.module";
 import { ThrottlerModule } from "@nestjs/throttler/dist/throttler.module";
 
 @Module({
@@ -19,6 +20,7 @@ import { ThrottlerModule } from "@nestjs/throttler/dist/throttler.module";
     CommonModule,
     UserModule,
     AuthModule,
+    AccountModule,
   ],
 })
 export class AppModule {}

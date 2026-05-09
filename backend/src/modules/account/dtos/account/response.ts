@@ -1,4 +1,4 @@
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Transform } from "class-transformer";
 import { Types } from "mongoose";
 
 @Exclude()
@@ -7,6 +7,7 @@ export class AccountResponseDto {
     Object.assign(this, partial);
   }
   @Expose()
+  @Transform(({ value }) => value?.toString())
   _id: Types.ObjectId;
 
   @Expose()

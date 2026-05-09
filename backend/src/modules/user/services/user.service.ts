@@ -11,7 +11,7 @@ export class UserService {
 
   public getUserByEmail(email: string): Promise<User | null> {
     return this.userRepository.get({
-      email,
+      email: { eq: email },
     });
   }
 
