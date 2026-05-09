@@ -1,0 +1,1 @@
+export { GetAccountByIdRequestDto } from "./request";

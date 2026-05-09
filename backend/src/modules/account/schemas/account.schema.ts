@@ -10,7 +10,13 @@ export type AccountDocument = HydratedDocument<Account>;
   id: false,
 })
 export class Account {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({
+    type: Types.ObjectId,
+    default: () => new Types.ObjectId(),
+  })
+  _id: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: "User", required: true })
   userId: Types.ObjectId;
 
   @Prop({ required: true })
@@ -25,6 +31,10 @@ export class Account {
   @Prop({ default: "UAH" })
   currency: string;
 
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ default: Date.now })
   createdAt: Date;
   updatedAt: Date;
 }
