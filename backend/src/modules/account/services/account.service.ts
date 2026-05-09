@@ -8,10 +8,11 @@ import { Types } from "mongoose";
 import { AccountRepository } from "../repositories";
 import {
   ICreateAccountParams,
-  IDeleteAccountParams,
+  ISetAccountStatusParams,
   IValidateOwnershipParams,
   IEditAccountParams,
   IGetAccountByIdParams,
+  IGetUserAccountsParams,
 } from "./types";
 import { Account } from "../schemas";
 
@@ -23,20 +24,27 @@ export class AccountService {
     return this.accountRepository.create(params);
   }
 
-  public async deleteAccount({
+  public async setAccountStatus({
     _id,
     userId,
-  }: IDeleteAccountParams): Promise<Account | null> {
+    isActive,
+  }: ISetAccountStatusParams): Promise<Account> {
     const isOwner = await this.validateAccountOwnership({ _id, userId });
 
     if (!isOwner) {
       throw new ForbiddenException("User does not own this account");
     }
 
-    return this.accountRepository.update(
+    const account = await this.accountRepository.update(
       { filter: { _id: { eq: _id } } },
-      { isActive: false },
+      { isActive: isActive },
     );
+
+    if (!account) {
+      throw new NotFoundException("Account not found");
+    }
+
+    return account;
   }
 
   public async editAccount(params: IEditAccountParams): Promise<Account> {
@@ -88,10 +96,11 @@ export class AccountService {
     return account;
   }
 
-  public async getUserAccounts(userId: Types.ObjectId): Promise<Account[]> {
-    return this.accountRepository.getMany({
-      filter: { userId: { eq: userId }, isActive: { eq: true } },
-    });
+  public async getUserAccounts({
+    userId,
+    query,
+  }: IGetUserAccountsParams): Promise<Account[]> {
+    return this.accountRepository.getAccounts({ userId, query });
   }
 
   private async validateAccountOwnership({

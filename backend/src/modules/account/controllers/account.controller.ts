@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { Types } from "mongoose";
@@ -18,6 +19,8 @@ import {
   EditAccountRequestBodyDto,
   EditAccountRequestParamsDto,
   GetUserAccountsResponseDto,
+  ActivateAccountRequest,
+  GetAccountsQueryDto,
 } from "../dtos";
 import { CurrentUserId } from "../../common/decorators";
 import { AccessTokenGuard } from "../../auth/guards";
@@ -28,7 +31,7 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Post()
-  async createAccount(
+  public async createAccount(
     @Body() body: CreateAccountDto,
     @CurrentUserId() userId: Types.ObjectId,
   ): Promise<AccountResponseDto> {
@@ -41,7 +44,7 @@ export class AccountController {
   }
 
   @Patch(":id")
-  async editAccount(
+  public async editAccount(
     @Param() params: EditAccountRequestParamsDto,
     @Body() body: EditAccountRequestBodyDto,
     @CurrentUserId() userId: Types.ObjectId,
@@ -56,17 +59,33 @@ export class AccountController {
     return new AccountResponseDto(updatedAccount);
   }
 
-  @Get()
-  async getUserAccounts(
+  @Patch(":id/activation")
+  public async activateAccount(
     @CurrentUserId() userId: Types.ObjectId,
+    @Param() params: ActivateAccountRequest,
+  ): Promise<AccountResponseDto> {
+    const { id } = params;
+    const updatedAccount = await this.accountService.setAccountStatus({
+      _id: id,
+      userId,
+      isActive: true,
+    });
+
+    return new AccountResponseDto(updatedAccount);
+  }
+
+  @Get()
+  public async getUserAccounts(
+    @CurrentUserId() userId: Types.ObjectId,
+    @Query() query: GetAccountsQueryDto,
   ): Promise<GetUserAccountsResponseDto> {
-    const data = await this.accountService.getUserAccounts(userId);
+    const data = await this.accountService.getUserAccounts({ userId, query });
 
     return new GetUserAccountsResponseDto({ data });
   }
 
   @Get(":id")
-  async getAccountById(
+  public async getAccountById(
     @CurrentUserId() userId: Types.ObjectId,
     @Param() params: GetAccountByIdRequestDto,
   ): Promise<AccountResponseDto> {
@@ -80,11 +99,17 @@ export class AccountController {
   }
 
   @Delete(":id")
-  async deleteAccount(
+  public async deactivateAccount(
     @CurrentUserId() userId: Types.ObjectId,
     @Param() params: DeleteAccountRequest,
-  ): Promise<void> {
+  ): Promise<AccountResponseDto> {
     const { id } = params;
-    await this.accountService.deleteAccount({ _id: id, userId });
+    const updatedAccount = await this.accountService.setAccountStatus({
+      _id: id,
+      userId,
+      isActive: false,
+    });
+
+    return new AccountResponseDto(updatedAccount);
   }
 }

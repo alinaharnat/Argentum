@@ -6,4 +6,8 @@ export {
   EditAccountRequestBodyDto,
   EditAccountRequestParamsDto,
 } from "./edit-account";
-export { GetUserAccountsResponseDto } from "./get-user-accounts";
+export {
+  GetUserAccountsResponseDto,
+  GetAccountsQueryDto,
+} from "./get-user-accounts";
+export { ActivateAccountRequest } from "./activate-account";

@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
-export interface IDeleteAccountParams {
+export interface ISetAccountStatusParams {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
+  isActive: boolean;
 }

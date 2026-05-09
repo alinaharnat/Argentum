@@ -8,8 +8,7 @@ import {
   MaxLength,
   Length,
 } from "class-validator";
-
-export const ACCOUNT_TYPES = ["CASH", "BANK", "SAVINGS"] as const;
+import { AccountType } from "../../enums";
 
 export class CreateAccountDto {
   @IsString()
@@ -18,10 +17,10 @@ export class CreateAccountDto {
   name: string;
 
   @IsString()
-  @IsIn(ACCOUNT_TYPES, {
-    message: "Invalid account type. Allowed types are: CASH, BANK, SAVINGS",
+  @IsIn([AccountType.Cash, AccountType.Bank, AccountType.Savings], {
+    message: `Invalid account type. Allowed: ${Object.values(AccountType).join(", ")}`,
   })
-  type: (typeof ACCOUNT_TYPES)[number];
+  type: AccountType;
 
   @IsNumber({}, { message: "Invalid balance. Balance must be a number" })
   @IsOptional()
