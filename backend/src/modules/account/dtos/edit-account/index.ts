@@ -1,2 +1,2 @@
 export { EditAccountRequestBodyDto } from "./request-body";
-export { EditAccountRequestQueryDto } from "./request-query";
+export { EditAccountRequestParamsDto } from "./request-params";

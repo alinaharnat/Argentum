@@ -3,10 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
-  Query,
-  Req,
   UseGuards,
 } from "@nestjs/common";
 import { Types } from "mongoose";
@@ -17,7 +16,7 @@ import {
   GetAccountByIdRequestDto,
   DeleteAccountRequest,
   EditAccountRequestBodyDto,
-  EditAccountRequestQueryDto,
+  EditAccountRequestParamsDto,
   GetUserAccountsResponseDto,
 } from "../dtos";
 import { CurrentUserId } from "../../common/decorators";
@@ -41,14 +40,13 @@ export class AccountController {
 
   @Patch(":id")
   async editAccount(
-    @Query() query: EditAccountRequestQueryDto,
+    @Param() params: EditAccountRequestParamsDto,
     @Body() body: EditAccountRequestBodyDto,
     @CurrentUserId() userId: Types.ObjectId,
   ): Promise<AccountResponseDto> {
-    const { _id } = query;
-
+    const { id } = params;
     const updatedAccount = await this.accountService.editAccount({
-      _id,
+      _id: id,
       userId,
       ...body,
     });
@@ -68,19 +66,22 @@ export class AccountController {
   @Get(":id")
   async getAccountById(
     @CurrentUserId() userId: Types.ObjectId,
-    @Query() query: GetAccountByIdRequestDto,
+    @Param() params: GetAccountByIdRequestDto,
   ): Promise<AccountResponseDto> {
-    const { _id } = query;
-    const account = await this.accountService.getAccountById({ _id, userId });
+    const { id } = params;
+    const account = await this.accountService.getAccountById({
+      _id: id,
+      userId,
+    });
     return new AccountResponseDto(account);
   }
 
   @Delete(":id")
   async deleteAccount(
     @CurrentUserId() userId: Types.ObjectId,
-    @Query() query: DeleteAccountRequest,
+    @Param() params: DeleteAccountRequest,
   ): Promise<void> {
-    const { _id } = query;
-    await this.accountService.deleteAccount({ _id, userId });
+    const { id } = params;
+    await this.accountService.deleteAccount({ _id: id, userId });
   }
 }

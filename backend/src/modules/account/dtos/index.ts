@@ -4,6 +4,6 @@ export { GetAccountByIdRequestDto } from "./get-account-by-id";
 export { AccountResponseDto } from "./account";
 export {
   EditAccountRequestBodyDto,
-  EditAccountRequestQueryDto,
+  EditAccountRequestParamsDto,
 } from "./edit-account";
 export { GetUserAccountsResponseDto } from "./get-user-accounts";
