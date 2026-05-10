@@ -86,7 +86,6 @@ export class AccountService {
 
     const account = await this.accountRepository.get({
       _id: { eq: _id },
-      isActive: { eq: true },
     });
 
     if (!account) {
