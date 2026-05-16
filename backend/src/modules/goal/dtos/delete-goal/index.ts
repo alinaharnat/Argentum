@@ -1,0 +1,1 @@
+export { DeleteGoalRequestDto } from "./request";

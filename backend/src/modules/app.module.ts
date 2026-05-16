@@ -11,6 +11,7 @@ import { TransactionModule } from "./transaction/transaction.module";
 import { BudgetModule } from "./budget/budget.module";
 import { NotificationModule } from "./notification/notification.module";
 import { AnalyticsModule } from "./analytics/analytics.module";
+import { GoalModule } from "./goal/goal.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AnalyticsModule } from "./analytics/analytics.module";
     TransactionModule,
     BudgetModule,
     NotificationModule,
+    GoalModule,
     AnalyticsModule,
   ],
 })

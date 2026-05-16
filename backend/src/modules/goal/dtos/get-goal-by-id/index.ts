@@ -1,0 +1,1 @@
+export { GetGoalByIdRequestDto } from "./request";

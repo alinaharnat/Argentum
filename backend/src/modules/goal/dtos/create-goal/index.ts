@@ -1,0 +1,1 @@
+export { CreateGoalRequestDto } from "./request";

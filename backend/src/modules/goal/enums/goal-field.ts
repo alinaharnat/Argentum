@@ -1,9 +1,13 @@
 export enum GoalField {
   Id = "_id",
   UserId = "userId",
-  Name = "name",
+  Title = "title",
+  Description = "description",
   TargetAmount = "targetAmount",
   CurrentAmount = "currentAmount",
-  Deadline = "deadline",
+  Currency = "currency",
+  TargetDate = "targetDate",
   Status = "status",
+  CreatedAt = "createdAt",
+  UpdatedAt = "updatedAt",
 }

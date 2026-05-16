@@ -1,0 +1,1 @@
+export { GoalResponseDto } from "./response";
