@@ -13,6 +13,7 @@ import {
 } from "./types";
 import { Types } from "mongoose";
 import { SessionService } from "../session";
+import { User } from "../../../user/schemas";
 
 @Injectable()
 export class AuthService {
@@ -74,6 +75,10 @@ export class AuthService {
     refreshToken: string,
   ): Promise<string | undefined> {
     return this.sessionService.refreshSession(userId, refreshToken);
+  }
+
+  public getCurrentUser(userId: Types.ObjectId): Promise<User | null> {
+    return this.userService.getUserById(userId);
   }
 
   private validatePassword(

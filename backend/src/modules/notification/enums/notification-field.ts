@@ -4,4 +4,6 @@ export enum NotificationField {
   Type = "type",
   Message = "message",
   IsRead = "isRead",
+  CreatedAt = "createdAt",
+  UpdatedAt = "updatedAt",
 }

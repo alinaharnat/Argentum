@@ -10,7 +10,13 @@ export type CategoryDocument = HydratedDocument<Category>;
   id: false,
 })
 export class Category {
-  @Prop({ type: Types.ObjectId, ref: 'User', default: null }) // null для системних категорій
+  @Prop({
+    type: Types.ObjectId,
+    default: () => new Types.ObjectId(),
+  })
+  _id: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: "User", default: null }) // null для системних категорій
   userId: Types.ObjectId;
 
   @Prop({ required: true, trim: true })
@@ -24,6 +30,9 @@ export class Category {
 
   @Prop({ default: "#000000" })
   color: string;
+
+  @Prop({ default: false })
+  isDeleted: boolean;
 
   createdAt: Date;
   updatedAt: Date;

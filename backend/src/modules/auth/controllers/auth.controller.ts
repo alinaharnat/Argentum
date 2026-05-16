@@ -2,10 +2,13 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Patch,
   Post,
   Req,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from "@nestjs/common";
 import type { IRefreshRequest } from "../types";
 import { AuthService } from "../services";
@@ -15,12 +18,17 @@ import {
   RefreshResponseDto,
   RegisterRequestDto,
   RegisterResponseDto,
+  ProfileResponseDto,
 } from "../dtos";
 import { RefreshTokenGuard } from "../guards";
 import { SetRefreshTokenCookie, ClearRefreshTokenCookie } from "../decorators";
 import { GetCookie } from "../../common/decorators";
 import { CookieKey } from "../../common/enums";
 import { ThrottlerGuard, Throttle } from "@nestjs/throttler";
+import { AccessTokenGuard } from "../guards";
+import { CurrentUserId } from "../../common/decorators";
+import { Types } from "mongoose";
+import { NotFoundException } from "@nestjs/common";
 
 @Controller("auth")
 export class AuthController {
@@ -39,6 +47,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 3, ttl: 300000 } })
   @Post("login")
+  @HttpCode(HttpStatus.OK)
   @SetRefreshTokenCookie()
   public async login(@Body() body: LoginRequestDto): Promise<LoginResponseDto> {
     const result = await this.authService.login(body);
@@ -64,5 +73,19 @@ export class AuthController {
     @GetCookie(CookieKey.RefreshToken) refreshToken: string,
   ): Promise<void> {
     await this.authService.logout(refreshToken);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Get("me")
+  public async getCurrentUser(
+    @CurrentUserId() userId: Types.ObjectId,
+  ): Promise<ProfileResponseDto> {
+    const user = await this.authService.getCurrentUser(userId);
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    return new ProfileResponseDto(user);
   }
 }

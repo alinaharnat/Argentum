@@ -6,6 +6,11 @@ import { UserModule } from "./user/user.module";
 import { AuthModule } from "./auth/auth.module";
 import { AccountModule } from "./account/account.module";
 import { ThrottlerModule } from "@nestjs/throttler/dist/throttler.module";
+import { CategoryModule } from "./category/category.module";
+import { TransactionModule } from "./transaction/transaction.module";
+import { BudgetModule } from "./budget/budget.module";
+import { NotificationModule } from "./notification/notification.module";
+import { AnalyticsModule } from "./analytics/analytics.module";
 
 @Module({
   imports: [
@@ -21,6 +26,11 @@ import { ThrottlerModule } from "@nestjs/throttler/dist/throttler.module";
     UserModule,
     AuthModule,
     AccountModule,
+    CategoryModule,
+    TransactionModule,
+    BudgetModule,
+    NotificationModule,
+    AnalyticsModule,
   ],
 })
 export class AppModule {}

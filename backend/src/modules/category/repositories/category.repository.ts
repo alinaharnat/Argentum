@@ -6,7 +6,9 @@ import { Category } from "../schemas";
 
 @Injectable()
 export class CategoryRepository extends BaseRepository<Category> {
-  constructor(@InjectModel(Category.name) private readonly categoryModel: Model<Category>) {
+  constructor(
+    @InjectModel(Category.name) private readonly categoryModel: Model<Category>,
+  ) {
     super(categoryModel);
   }
 }
