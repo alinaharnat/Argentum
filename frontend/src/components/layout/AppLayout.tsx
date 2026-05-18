@@ -5,6 +5,7 @@ import {
   Wallet,
   Target,
   Tags,
+  CreditCard,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ import { useLogout } from "@/features/auth/hooks";
 
 const nav = [
   { to: "/dashboard", label: "Дашборд", icon: LayoutDashboard },
+  { to: "/accounts", label: "Рахунки", icon: CreditCard },
   { to: "/transactions", label: "Транзакції", icon: Receipt },
   { to: "/categories", label: "Категорії", icon: Tags },
   { to: "/budgets", label: "Бюджети", icon: Wallet },

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { RegisterPage } from "@/features/auth/pages/RegisterPage";
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
+import { AccountsPage } from "@/features/accounts/pages/AccountsPage";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 
@@ -23,6 +24,7 @@ export function AppRouter() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/accounts" element={<AccountsPage />} />
           <Route
             path="/transactions"
             element={<Placeholder title="Транзакції" />}
