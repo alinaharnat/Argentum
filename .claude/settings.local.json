@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(nslookup -type=SRV _mongodb._tcp.argentumdb.ygfa9e6.mongodb.net)",
+      "Bash(nslookup -type=SRV _mongodb._tcp.argentumdb.ygfa9e6.mongodb.net 8.8.8.8)",
+      "Bash(taskkill /F /IM node.exe)",
+      "PowerShell(Get-Process *)",
+      "Bash(nslookup -type=TXT argentumdb.ygfa9e6.mongodb.net 8.8.8.8)",
+      "Bash(git restore *)",
+      "Bash(rm -f tsconfig.build.tsbuildinfo)",
+      "Bash(rm -rf dist)",
+      "Bash(npm start *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(Stop-Process *)"
+    ]
+  }
+}
