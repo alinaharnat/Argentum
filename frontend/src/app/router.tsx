@@ -3,6 +3,8 @@ import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { RegisterPage } from "@/features/auth/pages/RegisterPage";
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import { AccountsPage } from "@/features/accounts/pages/AccountsPage";
+import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
+import { TransactionsPage } from "@/features/transactions/pages/TransactionsPage";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 
@@ -25,14 +27,8 @@ export function AppRouter() {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/accounts" element={<AccountsPage />} />
-          <Route
-            path="/transactions"
-            element={<Placeholder title="Транзакції" />}
-          />
-          <Route
-            path="/categories"
-            element={<Placeholder title="Категорії" />}
-          />
+          <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/budgets" element={<Placeholder title="Бюджети" />} />
           <Route path="/goals" element={<Placeholder title="Цілі" />} />
         </Route>

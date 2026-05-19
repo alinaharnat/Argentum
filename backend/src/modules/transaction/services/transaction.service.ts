@@ -15,6 +15,7 @@ import { Transaction } from "../schemas";
 import { AccountService } from "../../account/services";
 import { CategoryService } from "../../category/services/category.service";
 import { TFilter } from "../../database/types";
+import { TransactionType } from "../enums";
 
 @Injectable()
 export class TransactionService {
@@ -40,7 +41,14 @@ export class TransactionService {
       throw new BadRequestException("Category type does not match transaction");
     }
 
-    return this.transactionRepository.create(params);
+    const transaction = await this.transactionRepository.create(params);
+
+    await this.accountService.adjustBalance(
+      params.accountId,
+      this.computeBalanceDelta(params.type, params.amount),
+    );
+
+    return transaction;
   }
 
   public async updateTransaction(
@@ -91,6 +99,19 @@ export class TransactionService {
 
     if (!updated) {
       throw new NotFoundException("Transaction not found");
+    }
+
+    const oldDelta = this.computeBalanceDelta(existing.type, existing.amount);
+    const newDelta = this.computeBalanceDelta(updated.type, updated.amount);
+
+    if (existing.accountId.toString() === updated.accountId.toString()) {
+      const netDelta = newDelta - oldDelta;
+      if (netDelta !== 0) {
+        await this.accountService.adjustBalance(updated.accountId, netDelta);
+      }
+    } else {
+      await this.accountService.adjustBalance(existing.accountId, -oldDelta);
+      await this.accountService.adjustBalance(updated.accountId, newDelta);
     }
 
     return updated;
@@ -173,6 +194,15 @@ export class TransactionService {
     if (!deleted) {
       throw new NotFoundException("Transaction not found");
     }
+
+    await this.accountService.adjustBalance(
+      deleted.accountId,
+      -this.computeBalanceDelta(deleted.type, deleted.amount),
+    );
+  }
+
+  private computeBalanceDelta(type: TransactionType, amount: number): number {
+    return type === TransactionType.Income ? amount : -amount;
   }
 
   private validateDataForUpdate(

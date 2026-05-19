@@ -74,6 +74,22 @@ export class AccountService {
     return account;
   }
 
+  public async adjustBalance(
+    accountId: Types.ObjectId,
+    delta: number,
+  ): Promise<Account> {
+    const account = await this.accountRepository.adjustBalance(
+      accountId,
+      delta,
+    );
+
+    if (!account) {
+      throw new NotFoundException("Account not found");
+    }
+
+    return account;
+  }
+
   public async getAccountById({
     _id,
     userId,
