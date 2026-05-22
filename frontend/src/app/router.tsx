@@ -5,17 +5,10 @@ import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import { AccountsPage } from "@/features/accounts/pages/AccountsPage";
 import { CategoriesPage } from "@/features/categories/pages/CategoriesPage";
 import { TransactionsPage } from "@/features/transactions/pages/TransactionsPage";
+import { BudgetsPage } from "@/features/budgets/pages/BudgetsPage";
+import { GoalsPage } from "@/features/goals/pages/GoalsPage";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
-
-function Placeholder({ title }: { title: string }) {
-  return (
-    <div className="p-8">
-      <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
-      <p className="mt-2 text-muted-foreground">Сторінка в розробці</p>
-    </div>
-  );
-}
 
 export function AppRouter() {
   return (
@@ -29,8 +22,8 @@ export function AppRouter() {
           <Route path="/accounts" element={<AccountsPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/budgets" element={<Placeholder title="Бюджети" />} />
-          <Route path="/goals" element={<Placeholder title="Цілі" />} />
+          <Route path="/budgets" element={<BudgetsPage />} />
+          <Route path="/goals" element={<GoalsPage />} />
         </Route>
       </Route>
 
