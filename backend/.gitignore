@@ -6,3 +6,6 @@
 
 # dotenv environment variable files
 .env
+
+# automatically created build info
+tsconfig.build.tsbuildinfo
