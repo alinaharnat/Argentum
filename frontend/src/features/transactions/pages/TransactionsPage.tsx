@@ -88,7 +88,7 @@ export function TransactionsPage() {
   const canLoadMore = transactions.length === (filters.limit ?? PAGE_SIZE);
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-6 p-4 md:p-8">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Транзакції</h2>

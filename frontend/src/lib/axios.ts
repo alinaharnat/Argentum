@@ -7,6 +7,10 @@ export const api = axios.create({
 
 const MESSAGE_TRANSLATIONS: Record<string, string> = {
   "Invalid credentials": "Невірний email або пароль",
+  "User does not exist": "Невірний email або пароль",
+  "User not found": "Невірний email або пароль",
+  "Email already exists": "Користувач із таким email вже існує",
+  "User already exists": "Користувач із таким email вже існує",
 };
 
 function translateMessage(message: string): string {
