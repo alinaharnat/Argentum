@@ -31,7 +31,7 @@ export function useLogout() {
     mutationFn: authApi.logout,
     onSettled: () => {
       clearAccessToken();
-      navigate("/login");
+      navigate("/");
     },
   });
 }

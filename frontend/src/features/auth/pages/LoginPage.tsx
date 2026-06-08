@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Logo } from "@/components/ui/logo";
 import { loginSchema, type LoginFormData } from "../schemas";
 import { useLogin } from "../hooks";
 import { getErrorMessage } from "@/lib/axios";
@@ -35,7 +36,10 @@ export function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Вхід в Argentum</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-2xl">
+            <Logo className="h-7 w-7" />
+            Вхід в Argentum
+          </CardTitle>
           <CardDescription>
             Введіть email та пароль, щоб отримати доступ до акаунту
           </CardDescription>

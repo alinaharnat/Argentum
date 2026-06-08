@@ -9,6 +9,7 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowDownUp,
+  ScanLine,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ import {
   transactionFormSchema,
   type TransactionFormData,
 } from "../schemas";
+import { ReceiptScanDialog } from "../components/ReceiptScanDialog";
 import {
   SortOrder,
   TransactionSortField,
@@ -65,6 +67,10 @@ export function TransactionsPage() {
     offset: 0,
   });
   const [createOpen, setCreateOpen] = useState(false);
+  const [scanOpen, setScanOpen] = useState(false);
+  const [prefill, setPrefill] = useState<Partial<TransactionFormData> | null>(
+    null,
+  );
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [deleting, setDeleting] = useState<Transaction | null>(null);
 
@@ -96,13 +102,26 @@ export function TransactionsPage() {
             Усі ваші доходи та витрати з можливістю фільтрації
           </p>
         </div>
-        <Button
-          onClick={() => setCreateOpen(true)}
-          disabled={accounts.length === 0}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Нова транзакція
-        </Button>
+        <div className="flex shrink-0 gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setScanOpen(true)}
+            disabled={accounts.length === 0}
+          >
+            <ScanLine className="mr-2 h-4 w-4" />
+            Сканувати чек
+          </Button>
+          <Button
+            onClick={() => {
+              setPrefill(null);
+              setCreateOpen(true);
+            }}
+            disabled={accounts.length === 0}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Нова транзакція
+          </Button>
+        </div>
       </div>
 
       {accounts.length === 0 && !accountsQuery.isLoading && (
@@ -174,12 +193,26 @@ export function TransactionsPage() {
         </div>
       )}
 
+      <ReceiptScanDialog
+        open={scanOpen}
+        categories={categories}
+        onClose={() => setScanOpen(false)}
+        onConfirm={(scanned) => {
+          setScanOpen(false);
+          setPrefill(scanned);
+          setCreateOpen(true);
+        }}
+      />
       <TransactionFormDialog
         open={createOpen}
         mode="create"
+        prefill={prefill ?? undefined}
         accounts={accounts}
         categories={categories}
-        onClose={() => setCreateOpen(false)}
+        onClose={() => {
+          setCreateOpen(false);
+          setPrefill(null);
+        }}
       />
       <TransactionFormDialog
         open={editing !== null}
@@ -437,6 +470,7 @@ function TransactionFormDialog({
   open,
   mode,
   initial,
+  prefill,
   accounts,
   categories,
   onClose,
@@ -444,6 +478,7 @@ function TransactionFormDialog({
   open: boolean;
   mode: "create" | "edit";
   initial?: Transaction;
+  prefill?: Partial<TransactionFormData>;
   accounts: Account[];
   categories: Category[];
   onClose: () => void;
@@ -482,7 +517,9 @@ function TransactionFormDialog({
           date: toDateInputValue(initial.date),
           description: initial.description ?? "",
         }
-      : undefined,
+      : prefill
+        ? { ...emptyDefaults, ...prefill }
+        : undefined,
     defaultValues: emptyDefaults,
   });
 

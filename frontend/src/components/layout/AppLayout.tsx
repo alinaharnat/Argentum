@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 import { useLogout } from "@/features/auth/hooks";
 
 const nav = [
@@ -80,7 +81,8 @@ export function AppLayout() {
   return (
     <div className="flex min-h-screen bg-muted/30">
       <aside className="hidden w-60 flex-col border-r bg-card md:flex">
-        <div className="flex h-16 items-center border-b px-6">
+        <div className="flex h-16 items-center gap-2 border-b px-6">
+          <Logo className="h-7 w-7" />
           <h1 className="text-xl font-bold tracking-tight">Argentum</h1>
         </div>
         {navItems}
@@ -88,7 +90,10 @@ export function AppLayout() {
       </aside>
 
       <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b bg-card px-4 md:hidden">
-        <h1 className="text-lg font-bold tracking-tight">Argentum</h1>
+        <div className="flex items-center gap-2">
+          <Logo className="h-6 w-6" />
+          <h1 className="text-lg font-bold tracking-tight">Argentum</h1>
+        </div>
         <Button
           variant="ghost"
           size="icon"
@@ -108,7 +113,10 @@ export function AppLayout() {
           />
           <aside className="absolute left-0 top-0 flex h-full w-64 flex-col border-r bg-card shadow-lg">
             <div className="flex h-14 items-center justify-between border-b px-4">
-              <h1 className="text-lg font-bold tracking-tight">Argentum</h1>
+              <div className="flex items-center gap-2">
+                <Logo className="h-6 w-6" />
+                <h1 className="text-lg font-bold tracking-tight">Argentum</h1>
+              </div>
               <Button
                 variant="ghost"
                 size="icon"

@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Logo } from "@/components/ui/logo";
 import { registerSchema, type RegisterFormData } from "../schemas";
 import { useRegister } from "../hooks";
 import { getErrorMessage } from "@/lib/axios";
@@ -35,7 +36,10 @@ export function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Реєстрація в Argentum</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-2xl">
+            <Logo className="h-7 w-7" />
+            Реєстрація в Argentum
+          </CardTitle>
           <CardDescription>
             Створіть акаунт, щоб почати облік фінансів
           </CardDescription>
