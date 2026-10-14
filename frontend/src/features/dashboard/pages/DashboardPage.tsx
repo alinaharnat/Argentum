@@ -411,7 +411,7 @@ export function DashboardPage() {
                         )}
                       >
                         {isIncome ? "+" : "−"}
-                        {formatMoney(transaction.amount, transaction.currency)}
+                        {formatMoney(transaction.amount, mainCurrency)}
                       </div>
                     </div>
                   );
