@@ -1,0 +1,41 @@
+{
+  "title": "Дашборд",
+  "sectionLinkAll": "Усі",
+  "overview": "Огляд ваших фінансів за {{period}}",
+  "stats": {
+    "totalBalance": "Загальний баланс",
+    "activeAccounts_one": "{{count}} активний рахунок",
+    "activeAccounts_few": "{{count}} активні рахунки",
+    "activeAccounts_many": "{{count}} активних рахунків",
+    "incomeMonth": "Доходи (місяць)",
+    "expensesMonth": "Витрати (місяць)",
+    "goalsProgress": "Прогрес цілей",
+    "activeGoals_one": "{{count}} активна ціль",
+    "activeGoals_few": "{{count}} активні цілі",
+    "activeGoals_many": "{{count}} активних цілей",
+    "noActiveGoals": "Немає активних цілей"
+  },
+  "charts": {
+    "expensesByCategory": "Витрати за категоріями",
+    "noExpensesMonth": "За цей місяць витрат ще немає",
+    "total": "Усього",
+    "incomeAndExpenses": "Доходи та витрати",
+    "forYear": "За {{year}} рік",
+    "noYearData": "За цей рік даних ще немає",
+    "income": "Доходи",
+    "expense": "Витрати"
+  },
+  "transactions": {
+    "title": "Останні транзакції",
+    "subtitle": "Нещодавні операції",
+    "noTransactions": "Транзакцій ще немає",
+    "uncategorized": "Без категорії",
+    "loading": "Завантаження…"
+  },
+  "goals": {
+    "title": "Активні цілі",
+    "subtitle": "Прогрес накопичення",
+    "noGoals": "Активних цілей немає",
+    "loading": "Завантаження…"
+  }
+}

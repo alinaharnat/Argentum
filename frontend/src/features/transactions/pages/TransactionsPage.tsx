@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import {
   Plus,
   Pencil,
@@ -60,6 +61,7 @@ import {
 const PAGE_SIZE = 50;
 
 export function TransactionsPage() {
+  const { t, i18n } = useTranslation("transactions");
   const [filters, setFilters] = useState<GetTransactionsQuery>({
     sortBy: TransactionSortField.Date,
     sortOrder: SortOrder.Descending,
@@ -90,17 +92,15 @@ export function TransactionsPage() {
     return new Map(categories.map((c) => [c._id, c]));
   }, [categories]);
 
-  const groups = useMemo(() => groupByDate(transactions), [transactions]);
+  const groups = useMemo(() => groupByDate(transactions), [transactions, i18n.language]);
   const canLoadMore = transactions.length === (filters.limit ?? PAGE_SIZE);
 
   return (
     <div className="space-y-6 p-4 md:p-8">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Транзакції</h2>
-          <p className="text-muted-foreground">
-            Усі ваші доходи та витрати з можливістю фільтрації
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight">{t("title")}</h2>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <div className="flex shrink-0 gap-2">
           <Button
@@ -109,7 +109,7 @@ export function TransactionsPage() {
             disabled={accounts.length === 0}
           >
             <ScanLine className="mr-2 h-4 w-4" />
-            Сканувати чек
+            {t("scanReceipt")}
           </Button>
           <Button
             onClick={() => {
@@ -119,7 +119,7 @@ export function TransactionsPage() {
             disabled={accounts.length === 0}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Нова транзакція
+            {t("newTransaction")}
           </Button>
         </div>
       </div>
@@ -127,8 +127,7 @@ export function TransactionsPage() {
       {accounts.length === 0 && !accountsQuery.isLoading && (
         <Card>
           <CardContent className="flex h-32 items-center justify-center text-sm text-muted-foreground">
-            Спочатку створіть рахунок на сторінці «Рахунки», щоб додавати
-            транзакції.
+            {t("noAccountsNotice")}
           </CardContent>
         </Card>
       )}
@@ -140,7 +139,7 @@ export function TransactionsPage() {
       />
 
       {isLoading && (
-        <p className="text-sm text-muted-foreground">Завантаження…</p>
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
       )}
       {isError && (
         <p className="text-sm text-destructive">{getErrorMessage(error)}</p>
@@ -149,7 +148,7 @@ export function TransactionsPage() {
       {!isLoading && transactions.length === 0 && (
         <Card>
           <CardContent className="flex h-40 items-center justify-center text-muted-foreground">
-            Транзакцій не знайдено. Створіть першу або змініть фільтри.
+            {t("empty")}
           </CardContent>
         </Card>
       )}
@@ -188,7 +187,7 @@ export function TransactionsPage() {
               }))
             }
           >
-            Завантажити ще
+            {t("loadMore")}
           </Button>
         </div>
       )}
@@ -241,14 +240,15 @@ export function TransactionsPage() {
 }
 
 function FilterBar({
-  filters,
-  onChange,
-  categories,
-}: {
+                     filters,
+                     onChange,
+                     categories,
+                   }: {
   filters: GetTransactionsQuery;
   onChange: (next: GetTransactionsQuery) => void;
   categories: Category[];
 }) {
+  const { t } = useTranslation("transactions");
   const reset = () =>
     onChange({
       sortBy: TransactionSortField.Date,
@@ -266,11 +266,13 @@ function FilterBar({
       <CardContent className="space-y-3 p-4">
         <div className="flex items-center gap-2 text-sm font-medium">
           <Filter className="h-4 w-4" />
-          Фільтри
+          {t("filterBar.title")}
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Тип</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t("filterBar.type")}
+            </Label>
             <Select
               value={filters.type ?? ""}
               onChange={(e) =>
@@ -284,13 +286,19 @@ function FilterBar({
                 })
               }
             >
-              <option value="">Усі</option>
-              <option value={TransactionType.Expense}>Витрати</option>
-              <option value={TransactionType.Income}>Доходи</option>
+              <option value="">{t("filterBar.all")}</option>
+              <option value={TransactionType.Expense}>
+                {t("filterBar.expense")}
+              </option>
+              <option value={TransactionType.Income}>
+                {t("filterBar.income")}
+              </option>
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Категорія</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t("filterBar.category")}
+            </Label>
             <Select
               value={filters.categoryId ?? ""}
               onChange={(e) =>
@@ -300,7 +308,7 @@ function FilterBar({
                 })
               }
             >
-              <option value="">Усі</option>
+              <option value="">{t("filterBar.all")}</option>
               {visibleCategories.map((c) => (
                 <option key={c._id} value={c._id}>
                   {getCategoryDisplayName(c)}
@@ -309,7 +317,9 @@ function FilterBar({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Від (дата)</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t("filterBar.dateFrom")}
+            </Label>
             <Input
               type="date"
               value={filters.dateFrom ?? ""}
@@ -319,7 +329,9 @@ function FilterBar({
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">До (дата)</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t("filterBar.dateTo")}
+            </Label>
             <Input
               type="date"
               value={filters.dateTo ?? ""}
@@ -329,7 +341,9 @@ function FilterBar({
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Сума від</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t("filterBar.amountFrom")}
+            </Label>
             <Input
               type="number"
               step="0.01"
@@ -345,7 +359,9 @@ function FilterBar({
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Сума до</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t("filterBar.amountTo")}
+            </Label>
             <Input
               type="number"
               step="0.01"
@@ -361,7 +377,9 @@ function FilterBar({
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Сортування</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t("filterBar.sorting")}
+            </Label>
             <Select
               value={`${filters.sortBy ?? TransactionSortField.Date}:${filters.sortOrder ?? SortOrder.Descending}`}
               onChange={(e) => {
@@ -373,16 +391,16 @@ function FilterBar({
                 });
               }}
             >
-              <option value="date:-1">Дата (новіші)</option>
-              <option value="date:1">Дата (старіші)</option>
-              <option value="amount:-1">Сума (більші)</option>
-              <option value="amount:1">Сума (менші)</option>
+              <option value="date:-1">{t("filterBar.sortDateDesc")}</option>
+              <option value="date:1">{t("filterBar.sortDateAsc")}</option>
+              <option value="amount:-1">{t("filterBar.sortAmountDesc")}</option>
+              <option value="amount:1">{t("filterBar.sortAmountAsc")}</option>
             </Select>
           </div>
           <div className="flex items-end">
             <Button variant="outline" className="w-full" onClick={reset}>
               <ArrowDownUp className="mr-2 h-4 w-4" />
-              Скинути
+              {t("filterBar.reset")}
             </Button>
           </div>
         </div>
@@ -392,13 +410,13 @@ function FilterBar({
 }
 
 function TransactionRow({
-  transaction,
-  account,
-  category,
-  isLast,
-  onEdit,
-  onDelete,
-}: {
+                          transaction,
+                          account,
+                          category,
+                          isLast,
+                          onEdit,
+                          onDelete,
+                        }: {
   transaction: Transaction;
   account?: Account;
   category?: Category;
@@ -406,6 +424,7 @@ function TransactionRow({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const { t } = useTranslation("transactions");
   const isIncome = transaction.type === TransactionType.Income;
   const sign = isIncome ? "+" : "−";
   const amountClass = isIncome ? "text-emerald-600" : "text-rose-600";
@@ -438,7 +457,7 @@ function TransactionRow({
           <span className="truncate font-medium">
             {category
               ? getCategoryDisplayName(category)
-              : "Невідома категорія"}
+              : t("unknownCategory")}
           </span>
           {transaction.description && (
             <span className="truncate text-sm text-muted-foreground">
@@ -447,7 +466,7 @@ function TransactionRow({
           )}
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>{account?.name ?? "Невідомий рахунок"}</span>
+          <span>{account?.name ?? t("unknownAccount")}</span>
         </div>
       </div>
       <div className={cn("text-right font-semibold tabular-nums", amountClass)}>
@@ -467,14 +486,14 @@ function TransactionRow({
 }
 
 function TransactionFormDialog({
-  open,
-  mode,
-  initial,
-  prefill,
-  accounts,
-  categories,
-  onClose,
-}: {
+                                 open,
+                                 mode,
+                                 initial,
+                                 prefill,
+                                 accounts,
+                                 categories,
+                                 onClose,
+                               }: {
   open: boolean;
   mode: "create" | "edit";
   initial?: Transaction;
@@ -483,6 +502,7 @@ function TransactionFormDialog({
   categories: Category[];
   onClose: () => void;
 }) {
+  const { t } = useTranslation("transactions");
   const create = useCreateTransaction();
   const update = useUpdateTransaction(initial?._id ?? "");
   const mutation = mode === "create" ? create : update;
@@ -510,13 +530,13 @@ function TransactionFormDialog({
     resolver: zodResolver(transactionFormSchema),
     values: initial
       ? {
-          accountId: initial.accountId,
-          categoryId: initial.categoryId,
-          type: initial.type,
-          amount: String(initial.amount),
-          date: toDateInputValue(initial.date),
-          description: initial.description ?? "",
-        }
+        accountId: initial.accountId,
+        categoryId: initial.categoryId,
+        type: initial.type,
+        amount: String(initial.amount),
+        date: toDateInputValue(initial.date),
+        description: initial.description ?? "",
+      }
       : prefill
         ? { ...emptyDefaults, ...prefill }
         : undefined,
@@ -570,11 +590,9 @@ function TransactionFormDialog({
       <DialogContent onClose={close} className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Нова транзакція" : "Редагування"}
+            {mode === "create" ? t("modal.createTitle") : t("modal.editTitle")}
           </DialogTitle>
-          <DialogDescription>
-            Введіть деталі операції — баланс рахунку оновиться автоматично
-          </DialogDescription>
+          <DialogDescription>{t("modal.description")}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Controller
@@ -593,7 +611,7 @@ function TransactionFormDialog({
                   )}
                 >
                   <TrendingDown className="h-4 w-4" />
-                  Витрата
+                  {t("modal.expense")}
                 </button>
                 <button
                   type="button"
@@ -606,7 +624,7 @@ function TransactionFormDialog({
                   )}
                 >
                   <TrendingUp className="h-4 w-4" />
-                  Дохід
+                  {t("modal.income")}
                 </button>
               </div>
             )}
@@ -614,7 +632,7 @@ function TransactionFormDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="tx-amount">Сума</Label>
+              <Label htmlFor="tx-amount">{t("modal.amount")}</Label>
               <Input
                 id="tx-amount"
                 type="number"
@@ -623,31 +641,31 @@ function TransactionFormDialog({
                 placeholder="0.00"
                 {...register("amount")}
               />
-              {errors.amount && (
+              {errors.amount?.message && (
                 <p className="text-sm text-destructive">
-                  {errors.amount.message}
+                  {t(errors.amount.message as any)}
                 </p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="tx-date">Дата</Label>
+              <Label htmlFor="tx-date">{t("modal.date")}</Label>
               <Input id="tx-date" type="date" {...register("date")} />
-              {errors.date && (
+              {errors.date?.message && (
                 <p className="text-sm text-destructive">
-                  {errors.date.message}
+                  {t(errors.date.message as any)}
                 </p>
               )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tx-account">Рахунок</Label>
+            <Label htmlFor="tx-account">{t("modal.account")}</Label>
             <Controller
               control={control}
               name="accountId"
               render={({ field }) => (
                 <Select id="tx-account" {...field}>
-                  <option value="">— Оберіть —</option>
+                  <option value="">{t("modal.selectAccount")}</option>
                   {activeAccounts.map((a) => (
                     <option key={a._id} value={a._id}>
                       {a.name} ({a.currency})
@@ -656,24 +674,24 @@ function TransactionFormDialog({
                 </Select>
               )}
             />
-            {errors.accountId && (
+            {errors.accountId?.message && (
               <p className="text-sm text-destructive">
-                {errors.accountId.message}
+                {t(errors.accountId.message as any)}
               </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tx-category">Категорія</Label>
+            <Label htmlFor="tx-category">{t("modal.category")}</Label>
             <Controller
               control={control}
               name="categoryId"
               render={({ field }) => (
                 <Select id="tx-category" {...field}>
-                  <option value="">— Оберіть —</option>
+                  <option value="">{t("modal.selectCategory")}</option>
                   {visibleCategories.length === 0 && (
                     <option value="" disabled>
-                      Немає категорій для цього типу
+                      {t("modal.noCategoryForType")}
                     </option>
                   )}
                   {visibleCategories
@@ -693,24 +711,24 @@ function TransactionFormDialog({
                 </Select>
               )}
             />
-            {errors.categoryId && (
+            {errors.categoryId?.message && (
               <p className="text-sm text-destructive">
-                {errors.categoryId.message}
+                {t(errors.categoryId.message as any)}
               </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tx-desc">Опис (необовʼязково)</Label>
+            <Label htmlFor="tx-desc">{t("modal.txDescription")}</Label>
             <Input
               id="tx-desc"
-              placeholder="Покупка в АТБ"
+              placeholder={t("modal.descriptionPlaceholder")}
               maxLength={200}
               {...register("description")}
             />
-            {errors.description && (
+            {errors.description?.message && (
               <p className="text-sm text-destructive">
-                {errors.description.message}
+                {t(errors.description.message as any)}
               </p>
             )}
           </div>
@@ -723,14 +741,14 @@ function TransactionFormDialog({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={close}>
-              Скасувати
+              {t("common:buttons.cancel")}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending
-                ? "Збереження…"
+                ? t("modal.submitting")
                 : mode === "create"
-                  ? "Створити"
-                  : "Зберегти"}
+                  ? t("modal.createSubmit")
+                  : t("modal.editSubmit")}
             </Button>
           </DialogFooter>
         </form>
@@ -740,14 +758,14 @@ function TransactionFormDialog({
 }
 
 function DeleteConfirmDialog({
-  transaction,
-  account,
-  category,
-  onCancel,
-  onConfirm,
-  loading,
-  error,
-}: {
+                               transaction,
+                               account,
+                               category,
+                               onCancel,
+                               onConfirm,
+                               loading,
+                               error,
+                             }: {
   transaction: Transaction | null;
   account?: Account;
   category?: Category;
@@ -756,29 +774,39 @@ function DeleteConfirmDialog({
   loading: boolean;
   error: string | null;
 }) {
+  const { t } = useTranslation(["transactions", "common"]);
   const currency = account?.currency ?? "UAH";
+  const categoryName = category
+    ? getCategoryDisplayName(category)
+    : t("transactions:deleteModal.defaultCategory");
+
   return (
     <Dialog open={transaction !== null} onOpenChange={(v) => !v && onCancel()}>
       <DialogContent onClose={onCancel}>
         <DialogHeader>
-          <DialogTitle>Видалити транзакцію?</DialogTitle>
+          <DialogTitle>{t("transactions:deleteModal.title")}</DialogTitle>
           <DialogDescription>
             {transaction
-              ? `${category ? getCategoryDisplayName(category) : "Транзакція"} · ${formatAmount(transaction.amount, currency)} — буде видалено, баланс рахунку відкоригується.`
+              ? t("transactions:deleteModal.description", {
+                category: categoryName,
+                amount: formatAmount(transaction.amount, currency),
+              })
               : ""}
           </DialogDescription>
         </DialogHeader>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <DialogFooter>
           <Button variant="outline" onClick={onCancel}>
-            Скасувати
+            {t("common:buttons.cancel")}
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
             disabled={loading}
           >
-            {loading ? "Видалення…" : "Видалити"}
+            {loading
+              ? t("transactions:deleteModal.submitting")
+              : t("transactions:deleteModal.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

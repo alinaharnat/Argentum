@@ -1,28 +1,28 @@
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z.string().email("Введіть коректний email"),
-  password: z.string().min(8, "Пароль має бути не менше 8 символів"),
+  email: z.string().email("validation.emailInvalid"),
+  password: z.string().min(8, "validation.passwordMin"),
 });
 
 export const registerSchema = z.object({
   firstName: z
     .string()
-    .min(2, "Ім'я має бути не менше 2 символів")
-    .max(50, "Ім'я має бути не більше 50 символів"),
+    .min(2, "validation.firstNameMin")
+    .max(50, "validation.firstNameMax"),
   lastName: z
     .string()
-    .min(2, "Прізвище має бути не менше 2 символів")
-    .max(50, "Прізвище має бути не більше 50 символів"),
-  email: z.string().email("Введіть коректний email"),
+    .min(2, "validation.lastNameMin")
+    .max(50, "validation.lastNameMax"),
+  email: z.string().email("validation.emailInvalid"),
   password: z
     .string()
-    .min(8, "Пароль має бути не менше 8 символів")
-    .max(32, "Пароль має бути не більше 32 символів")
-    .regex(/[a-z]/, "Має містити малу літеру")
-    .regex(/[A-Z]/, "Має містити велику літеру")
-    .regex(/\d/, "Має містити цифру")
-    .regex(/[^A-Za-z0-9]/, "Має містити спеціальний символ"),
+    .min(8, "validation.passwordMin")
+    .max(32, "validation.passwordMax")
+    .regex(/[a-z]/, "validation.passwordLowercase")
+    .regex(/[A-Z]/, "validation.passwordUppercase")
+    .regex(/\d/, "validation.passwordNumber")
+    .regex(/[^A-Za-z0-9]/, "validation.passwordSpecial"),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

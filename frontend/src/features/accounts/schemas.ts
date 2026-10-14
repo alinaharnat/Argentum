@@ -9,19 +9,19 @@ const accountTypeValues = [
 
 const currencyField = z
   .string()
-  .regex(/^[A-Za-z]{3}$|^$/, "Код валюти — 3 літери, наприклад UAH");
+  .regex(/^[A-Za-z]{3}$|^$/, "validation.currencyRegex");
 
 export const createAccountSchema = z.object({
   name: z
     .string()
-    .min(1, "Назва обовʼязкова")
-    .max(100, "Назва має бути не більше 100 символів"),
+    .min(1, "validation.nameRequired")
+    .max(100, "validation.nameMax100"),
   type: z.enum(accountTypeValues, {
-    message: "Оберіть тип рахунку",
+    message: "validation.selectType",
   }),
   balance: z
     .string()
-    .regex(/^-?\d*\.?\d*$/, "Баланс має бути числом")
+    .regex(/^-?\d*\.?\d*$/, "validation.balanceNumber")
     .optional(),
   currency: currencyField.optional(),
 });
@@ -29,14 +29,14 @@ export const createAccountSchema = z.object({
 export const editAccountSchema = z.object({
   name: z
     .string()
-    .min(1, "Назва обовʼязкова")
-    .max(50, "Назва має бути не більше 50 символів"),
+    .min(1, "validation.nameRequired")
+    .max(50, "validation.nameMax50"),
   type: z.enum(accountTypeValues, {
-    message: "Оберіть тип рахунку",
+    message: "validation.selectType",
   }),
   currency: z
     .string()
-    .regex(/^[A-Za-z]{3}$/, "Код валюти — 3 літери, наприклад UAH"),
+    .regex(/^[A-Za-z]{3}$/, "validation.currencyRegex"),
 });
 
 export type CreateAccountFormData = z.infer<typeof createAccountSchema>;

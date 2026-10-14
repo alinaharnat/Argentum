@@ -1,6 +1,13 @@
+import i18n from "@/lib/i18n";
+
+function getLocale(): string {
+  const lang = i18n.language || (typeof navigator !== "undefined" ? navigator.language : "uk");
+  return lang.startsWith("en") ? "en-US" : "uk-UA";
+}
+
 export function formatAmount(amount: number, currency: string): string {
   try {
-    return new Intl.NumberFormat("uk-UA", {
+    return new Intl.NumberFormat(getLocale(), {
       style: "currency",
       currency,
       maximumFractionDigits: 2,
@@ -9,12 +16,6 @@ export function formatAmount(amount: number, currency: string): string {
     return `${amount.toFixed(2)} ${currency}`;
   }
 }
-
-const dayFormatter = new Intl.DateTimeFormat("uk-UA", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
 
 export function formatTransactionDate(iso: string): string {
   const d = new Date(iso);
@@ -27,9 +28,19 @@ export function formatTransactionDate(iso: string): string {
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
 
-  if (same(d, today)) return "Сьогодні";
-  if (same(d, yesterday)) return "Вчора";
-  return dayFormatter.format(d);
+  if (same(d, today)) return i18n.t("transactions:dateLabels.today", "Сьогодні");
+  if (same(d, yesterday)) return i18n.t("transactions:dateLabels.yesterday", "Вчора");
+
+  try {
+    const dayFormatter = new Intl.DateTimeFormat(getLocale(), {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    return dayFormatter.format(d);
+  } catch {
+    return d.toLocaleDateString();
+  }
 }
 
 export function toDateInputValue(iso?: string): string {

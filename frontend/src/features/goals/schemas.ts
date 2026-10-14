@@ -2,29 +2,29 @@ import { z } from "zod";
 
 const positiveAmount = z
   .string()
-  .min(1, "Введіть суму")
-  .regex(/^\d+(\.\d{1,2})?$/, "Сума має бути числом, наприклад 50000")
-  .refine((value) => Number(value) > 0, "Сума має бути більше 0");
+  .min(1, "validation.enterAmount")
+  .regex(/^\d+(\.\d{1,2})?$/, "validation.amountNumber")
+  .refine((value) => Number(value) > 0, "validation.amountPositive");
 
 const nonNegativeAmountOptional = z
   .string()
-  .regex(/^(\d+(\.\d{1,2})?)?$/, "Сума має бути числом")
+  .regex(/^(\d+(\.\d{1,2})?)?$/, "validation.amountNumber")
   .optional();
 
 export const goalFormSchema = z.object({
   title: z
     .string()
-    .min(1, "Назва обовʼязкова")
-    .max(120, "Назва має бути не більше 120 символів"),
+    .min(1, "validation.titleRequired")
+    .max(120, "validation.titleMax"),
   description: z
     .string()
-    .max(500, "Опис має бути не більше 500 символів")
+    .max(500, "validation.descriptionMax")
     .optional(),
   targetAmount: positiveAmount,
   currentAmount: nonNegativeAmountOptional,
   currency: z
     .string()
-    .regex(/^[A-Za-z]{3}$/, "Код валюти — 3 літери, наприклад UAH"),
+    .regex(/^[A-Za-z]{3}$/, "validation.currencyRegex"),
   targetDate: z.string().optional(),
 });
 

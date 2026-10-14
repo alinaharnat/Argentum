@@ -1,0 +1,49 @@
+{
+  "title": "Бюджети",
+  "subtitle": "Місячні ліміти витрат за категоріями",
+  "newBudget": "Новий бюджет",
+  "prevMonth": "Попередній місяць",
+  "nextMonth": "Наступний місяць",
+  "currentMonth": "Поточний місяць",
+  "exceededBadge": "Перевищено: {{count}}",
+  "loading": "Завантаження…",
+  "stats": {
+    "totalLimit": "Загальний ліміт",
+    "spent": "Витрачено",
+    "remaining": "Залишок"
+  },
+  "empty": "На {{period}} бюджетів ще немає.",
+  "createFirst": "Створити перший бюджет",
+  "card": {
+    "categoryDefault": "Категорія",
+    "used": "{{percent}}% використано",
+    "edit": "Редагувати бюджет",
+    "fromLimit": "з {{limit}}",
+    "exceededBy": "Перевищено на {{amount}}",
+    "remainingLabel": "Залишок:"
+  },
+  "createModal": {
+    "title": "Новий бюджет",
+    "description": "Ліміт витрат на {{period}}",
+    "noCategoriesNotice": "Для всіх категорій витрат на цей місяць уже встановлено бюджети. Створити нову категорію витрат або оберіть інший місяць.",
+    "category": "Категорія витрат",
+    "selectCategory": "Оберіть категорію",
+    "loadingCategories": "Завантаження…",
+    "limit": "Ліміт",
+    "submitting": "Збереження…",
+    "submit": "Створити"
+  },
+  "editModal": {
+    "title": "Редагування бюджету",
+    "spentSoFar": "Уже витрачено:",
+    "limit": "Ліміт",
+    "submitting": "Збереження…",
+    "submit": "Зберегти"
+  },
+  "validation": {
+    "enterAmount": "Введіть суму",
+    "amountNumber": "Сума має бути числом, наприклад 5000",
+    "amountPositive": "Сума має бути більше 0",
+    "selectCategory": "Оберіть категорію"
+  }
+}

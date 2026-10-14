@@ -1,0 +1,78 @@
+{
+  "title": "Financial Goals",
+  "subtitle": "Set goals and track your savings progress",
+  "newGoal": "New goal",
+  "loading": "Loading…",
+  "tabs": {
+    "active": "Active",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "empty": {
+    "active": "No active goals yet.",
+    "completed": "No completed goals yet.",
+    "cancelled": "No cancelled goals.",
+    "createFirst": "Create first goal"
+  },
+  "statusLabels": {
+    "active": "Active",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "card": {
+    "edit": "Edit goal",
+    "cancel": "Cancel goal",
+    "fromTarget": "of {{target}}",
+    "accumulated": "{{percent}}% saved",
+    "achieved": "Achieved",
+    "remaining": "{{amount}} remaining",
+    "until": "by {{date}}",
+    "topUp": "Top up"
+  },
+  "deadline": {
+    "expired": "Deadline passed",
+    "today": "Deadline is today",
+    "daysLeft_one": "{{count}} day left",
+    "daysLeft_other": "{{count}} days left",
+    "untilDate": "by {{date}}"
+  },
+  "modal": {
+    "createTitle": "New goal",
+    "editTitle": "Edit goal",
+    "description": "Specify a title, target amount, and optional deadline",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Emergency Fund",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "Why this goal matters",
+    "targetAmount": "Target amount",
+    "currentAmount": "Already saved",
+    "currency": "Currency",
+    "targetDate": "Deadline (optional)",
+    "submitting": "Saving…",
+    "createSubmit": "Create",
+    "editSubmit": "Save"
+  },
+  "topUpModal": {
+    "title": "Top up goal",
+    "description": "Saved {{current}} of {{target}} · {{remaining}} remaining",
+    "amountLabel": "Top-up amount",
+    "submitting": "Saving…",
+    "submit": "Top up"
+  },
+  "cancelModal": {
+    "title": "Cancel goal?",
+    "description": "Goal \"{{title}}\" will be marked as cancelled. You can view it in the \"Cancelled\" tab.",
+    "back": "Back",
+    "submitting": "Cancelling…",
+    "submit": "Cancel goal"
+  },
+  "validation": {
+    "enterAmount": "Enter amount",
+    "amountNumber": "Amount must be a number, e.g. 50000",
+    "amountPositive": "Amount must be greater than 0",
+    "titleRequired": "Title is required",
+    "titleMax": "Title must be at most 120 characters",
+    "descriptionMax": "Description must be at most 500 characters",
+    "currencyRegex": "Currency code must be 3 letters, e.g. UAH"
+  }
+}

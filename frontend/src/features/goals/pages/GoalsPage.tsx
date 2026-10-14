@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import {
   Plus,
   Pencil,
@@ -44,19 +45,8 @@ import {
   toDateInputValue,
 } from "../utils";
 
-const TABS = [
-  { value: GoalStatus.Active, label: "Активні" },
-  { value: GoalStatus.Completed, label: "Завершені" },
-  { value: GoalStatus.Cancelled, label: "Скасовані" },
-] as const;
-
-const EMPTY_TEXT: Record<GoalStatus, string> = {
-  [GoalStatus.Active]: "Активних цілей ще немає.",
-  [GoalStatus.Completed]: "Ще немає завершених цілей.",
-  [GoalStatus.Cancelled]: "Скасованих цілей немає.",
-};
-
 export function GoalsPage() {
+  const { t, i18n } = useTranslation("goals");
   const [tab, setTab] = useState<GoalStatus>(GoalStatus.Active);
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<Goal | null>(null);
@@ -82,44 +72,57 @@ export function GoalsPage() {
     [goals],
   );
 
-  const visibleGoals = goals.filter((g) => g.status === tab);
+  const visibleGoals = useMemo(
+    () => goals.filter((g) => g.status === tab),
+    [goals, tab, i18n.language]
+  );
+
+  const tabsConfig = [
+    { value: GoalStatus.Active, label: t("tabs.active") },
+    { value: GoalStatus.Completed, label: t("tabs.completed") },
+    { value: GoalStatus.Cancelled, label: t("tabs.cancelled") },
+  ];
+
+  const emptyTextMap: Record<GoalStatus, string> = {
+    [GoalStatus.Active]: t("empty.active"),
+    [GoalStatus.Completed]: t("empty.completed"),
+    [GoalStatus.Cancelled]: t("empty.cancelled"),
+  };
 
   return (
     <div className="space-y-6 p-4 md:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Фінансові цілі</h2>
-          <p className="text-muted-foreground">
-            Створюйте цілі та відстежуйте прогрес накопичення
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight">{t("title")}</h2>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <Button onClick={() => setCreateOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Нова ціль
+          {t("newGoal")}
         </Button>
       </div>
 
       <div className="flex flex-wrap gap-1 rounded-lg border bg-card p-1">
-        {TABS.map((t) => (
+        {tabsConfig.map((tabItem) => (
           <button
-            key={t.value}
+            key={tabItem.value}
             type="button"
-            onClick={() => setTab(t.value)}
+            onClick={() => setTab(tabItem.value)}
             className={cn(
               "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-              tab === t.value
+              tab === tabItem.value
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:bg-accent",
             )}
           >
-            {t.label}
-            <span className="ml-1.5 opacity-70">{counts[t.value]}</span>
+            {tabItem.label}
+            <span className="ml-1.5 opacity-70">{counts[tabItem.value]}</span>
           </button>
         ))}
       </div>
 
       {isLoading && (
-        <p className="text-sm text-muted-foreground">Завантаження…</p>
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
       )}
       {isError && (
         <p className="text-sm text-destructive">{getErrorMessage(error)}</p>
@@ -129,11 +132,11 @@ export function GoalsPage() {
         <Card>
           <CardContent className="flex h-48 flex-col items-center justify-center gap-3 text-center text-muted-foreground">
             <Target className="h-10 w-10 opacity-40" />
-            <p>{EMPTY_TEXT[tab]}</p>
+            <p>{emptyTextMap[tab]}</p>
             {tab === GoalStatus.Active && (
               <Button variant="outline" onClick={() => setCreateOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Створити першу ціль
+                {t("empty.createFirst")}
               </Button>
             )}
           </CardContent>
@@ -185,33 +188,6 @@ export function GoalsPage() {
   );
 }
 
-const STATUS_VISUALS: Record<
-  GoalStatus,
-  { iconBox: string; bar: string; badge: string; label: string }
-> = {
-  [GoalStatus.Active]: {
-    iconBox: "bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:text-blue-300",
-    bar: "bg-blue-500",
-    badge:
-      "bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300",
-    label: "Активна",
-  },
-  [GoalStatus.Completed]: {
-    iconBox:
-      "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300",
-    bar: "bg-emerald-500",
-    badge:
-      "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
-    label: "Завершена",
-  },
-  [GoalStatus.Cancelled]: {
-    iconBox: "bg-muted text-muted-foreground",
-    bar: "bg-muted-foreground/40",
-    badge: "bg-muted text-muted-foreground",
-    label: "Скасована",
-  },
-};
-
 const DEADLINE_TONE: Record<string, string> = {
   muted: "text-muted-foreground",
   warning: "text-amber-600",
@@ -219,17 +195,47 @@ const DEADLINE_TONE: Record<string, string> = {
 };
 
 function GoalCard({
-  goal,
-  onEdit,
-  onTopUp,
-  onCancel,
-}: {
+                    goal,
+                    onEdit,
+                    onTopUp,
+                    onCancel,
+                  }: {
   goal: Goal;
   onEdit: (goal: Goal) => void;
   onTopUp: (goal: Goal) => void;
   onCancel: (goal: Goal) => void;
 }) {
-  const visuals = STATUS_VISUALS[goal.status];
+  const { t } = useTranslation("goals");
+
+  const statusVisuals: Record<
+    GoalStatus,
+    { iconBox: string; bar: string; badge: string; label: string }
+    > = {
+    [GoalStatus.Active]: {
+      iconBox:
+        "bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:text-blue-300",
+      bar: "bg-blue-500",
+      badge:
+        "bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300",
+      label: t("statusLabels.active"),
+    },
+    [GoalStatus.Completed]: {
+      iconBox:
+        "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300",
+      bar: "bg-emerald-500",
+      badge:
+        "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
+      label: t("statusLabels.completed"),
+    },
+    [GoalStatus.Cancelled]: {
+      iconBox: "bg-muted text-muted-foreground",
+      bar: "bg-muted-foreground/40",
+      badge: "bg-muted text-muted-foreground",
+      label: t("statusLabels.cancelled"),
+    },
+  };
+
+  const visuals = statusVisuals[goal.status];
   const isActive = goal.status === GoalStatus.Active;
   const isCancelled = goal.status === GoalStatus.Cancelled;
   const achieved =
@@ -269,7 +275,7 @@ function GoalCard({
                 variant="ghost"
                 size="icon"
                 onClick={() => onEdit(goal)}
-                aria-label="Редагувати ціль"
+                aria-label={t("card.edit")}
               >
                 <Pencil className="h-3.5 w-3.5" />
               </Button>
@@ -277,7 +283,7 @@ function GoalCard({
                 variant="ghost"
                 size="icon"
                 onClick={() => onCancel(goal)}
-                aria-label="Скасувати ціль"
+                aria-label={t("card.cancel")}
               >
                 <Ban className="h-3.5 w-3.5" />
               </Button>
@@ -297,7 +303,9 @@ function GoalCard({
               {formatMoney(goal.currentAmount, goal.currency)}
             </span>
             <span className="text-sm text-muted-foreground">
-              з {formatMoney(goal.targetAmount, goal.currency)}
+              {t("card.fromTarget", {
+                target: formatMoney(goal.targetAmount, goal.currency),
+              })}
             </span>
           </div>
 
@@ -310,16 +318,18 @@ function GoalCard({
 
           <div className="flex items-center justify-between text-xs">
             <span className="font-medium text-muted-foreground">
-              {goal.progressPercentage}% накопичено
+              {t("card.accumulated", { percent: goal.progressPercentage })}
             </span>
             {achieved ? (
               <span className="flex items-center gap-1 font-medium text-emerald-600">
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                Досягнуто
+                {t("card.achieved")}
               </span>
             ) : (
               <span className="text-muted-foreground">
-                Залишилось {formatMoney(goal.remainingAmount, goal.currency)}
+                {t("card.remaining", {
+                  amount: formatMoney(goal.remainingAmount, goal.currency),
+                })}
               </span>
             )}
           </div>
@@ -338,7 +348,7 @@ function GoalCard({
           {goal.targetDate && !isActive && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Calendar className="h-3.5 w-3.5" />
-              до {formatGoalDate(goal.targetDate)}
+              {t("card.until", { date: formatGoalDate(goal.targetDate) })}
             </div>
           )}
         </div>
@@ -350,7 +360,7 @@ function GoalCard({
             onClick={() => onTopUp(goal)}
           >
             <Coins className="mr-2 h-4 w-4" />
-            Поповнити
+            {t("card.topUp")}
           </Button>
         )}
       </CardContent>
@@ -359,16 +369,17 @@ function GoalCard({
 }
 
 function GoalFormDialog({
-  open,
-  mode,
-  initial,
-  onClose,
-}: {
+                          open,
+                          mode,
+                          initial,
+                          onClose,
+                        }: {
   open: boolean;
   mode: "create" | "edit";
   initial?: Goal;
   onClose: () => void;
 }) {
+  const { t } = useTranslation(["goals", "common"]);
   const create = useCreateGoal();
   const update = useUpdateGoal(initial?._id ?? "");
   const mutation = mode === "create" ? create : update;
@@ -382,13 +393,13 @@ function GoalFormDialog({
     resolver: zodResolver(goalFormSchema),
     values: initial
       ? {
-          title: initial.title,
-          description: initial.description ?? "",
-          targetAmount: String(initial.targetAmount),
-          currentAmount: String(initial.currentAmount),
-          currency: initial.currency,
-          targetDate: toDateInputValue(initial.targetDate),
-        }
+        title: initial.title,
+        description: initial.description ?? "",
+        targetAmount: String(initial.targetAmount),
+        currentAmount: String(initial.currentAmount),
+        currency: initial.currency,
+        targetDate: toDateInputValue(initial.targetDate),
+      }
       : undefined,
     defaultValues: {
       title: "",
@@ -429,67 +440,77 @@ function GoalFormDialog({
       <DialogContent onClose={close} className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Нова ціль" : "Редагування цілі"}
+            {mode === "create"
+              ? t("goals:modal.createTitle")
+              : t("goals:modal.editTitle")}
           </DialogTitle>
           <DialogDescription>
-            Вкажіть назву, потрібну суму та, за бажанням, дедлайн
+            {t("goals:modal.description")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="goal-title">Назва</Label>
+            <Label htmlFor="goal-title">{t("goals:modal.titleLabel")}</Label>
             <Input
               id="goal-title"
-              placeholder="Подушка безпеки"
+              placeholder={t("goals:modal.titlePlaceholder")}
               {...register("title")}
             />
-            {errors.title && (
-              <p className="text-sm text-destructive">{errors.title.message}</p>
+            {errors.title?.message && (
+              <p className="text-sm text-destructive">
+                {t(`goals:${errors.title.message}` as any)}
+              </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="goal-description">Опис (необовʼязково)</Label>
+            <Label htmlFor="goal-description">
+              {t("goals:modal.descriptionLabel")}
+            </Label>
             <textarea
               id="goal-description"
               rows={3}
-              placeholder="Навіщо ця ціль"
+              placeholder={t("goals:modal.descriptionPlaceholder")}
               className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               {...register("description")}
             />
-            {errors.description && (
+            {errors.description?.message && (
               <p className="text-sm text-destructive">
-                {errors.description.message}
+                {t(`goals:${errors.description.message}` as any)}
               </p>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="goal-target">Потрібна сума</Label>
+              <Label htmlFor="goal-target">
+                {t("goals:modal.targetAmount")}
+              </Label>
               <Input
                 id="goal-target"
                 inputMode="decimal"
                 placeholder="50000"
                 {...register("targetAmount")}
               />
-              {errors.targetAmount && (
+              {errors.targetAmount?.message && (
                 <p className="text-sm text-destructive">
-                  {errors.targetAmount.message}
+                  {t(`goals:${errors.targetAmount.message}` as any)}
                 </p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="goal-current">Вже накопичено</Label>
+              <Label htmlFor="goal-current">
+                {t("goals:modal.currentAmount")}
+              </Label>
               <Input
                 id="goal-current"
                 inputMode="decimal"
                 placeholder="0"
                 {...register("currentAmount")}
               />
-              {errors.currentAmount && (
+              {errors.currentAmount?.message && (
                 <p className="text-sm text-destructive">
-                  {errors.currentAmount.message}
+                  {t(`goals:${errors.currentAmount.message}` as any)}
                 </p>
               )}
             </div>
@@ -497,7 +518,7 @@ function GoalFormDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="goal-currency">Валюта</Label>
+              <Label htmlFor="goal-currency">{t("goals:modal.currency")}</Label>
               <Input
                 id="goal-currency"
                 placeholder="UAH"
@@ -505,14 +526,14 @@ function GoalFormDialog({
                 className="uppercase"
                 {...register("currency")}
               />
-              {errors.currency && (
+              {errors.currency?.message && (
                 <p className="text-sm text-destructive">
-                  {errors.currency.message}
+                  {t(`goals:${errors.currency.message}` as any)}
                 </p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="goal-date">Дедлайн (необовʼязково)</Label>
+              <Label htmlFor="goal-date">{t("goals:modal.targetDate")}</Label>
               <Input id="goal-date" type="date" {...register("targetDate")} />
             </div>
           </div>
@@ -525,14 +546,14 @@ function GoalFormDialog({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={close}>
-              Скасувати
+              {t("common:buttons.cancel")}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending
-                ? "Збереження…"
+                ? t("goals:modal.submitting")
                 : mode === "create"
-                  ? "Створити"
-                  : "Зберегти"}
+                  ? t("goals:modal.createSubmit")
+                  : t("goals:modal.editSubmit")}
             </Button>
           </DialogFooter>
         </form>
@@ -542,12 +563,13 @@ function GoalFormDialog({
 }
 
 function TopUpDialog({
-  goal,
-  onClose,
-}: {
+                       goal,
+                       onClose,
+                     }: {
   goal: Goal | null;
   onClose: () => void;
 }) {
+  const { t } = useTranslation(["goals", "common"]);
   const update = useUpdateGoal(goal?._id ?? "");
   const {
     register,
@@ -582,22 +604,23 @@ function TopUpDialog({
     <Dialog open={goal !== null} onOpenChange={(v) => !v && close()}>
       <DialogContent onClose={close}>
         <DialogHeader>
-          <DialogTitle>Поповнити ціль</DialogTitle>
+          <DialogTitle>{t("goals:topUpModal.title")}</DialogTitle>
           <DialogDescription>{goal?.title}</DialogDescription>
         </DialogHeader>
         {goal && (
           <p className="text-sm text-muted-foreground">
-            Накопичено{" "}
-            <span className="font-medium text-foreground">
-              {formatMoney(goal.currentAmount, goal.currency)}
-            </span>{" "}
-            із {formatMoney(goal.targetAmount, goal.currency)} · залишилось{" "}
-            {formatMoney(Math.max(goal.remainingAmount, 0), goal.currency)}
+            {t("goals:topUpModal.description", {
+              current: formatMoney(goal.currentAmount, goal.currency),
+              target: formatMoney(goal.targetAmount, goal.currency),
+              remaining: formatMoney(Math.max(goal.remainingAmount, 0), goal.currency),
+            })}
           </p>
         )}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="topup-amount">Сума поповнення</Label>
+            <Label htmlFor="topup-amount">
+              {t("goals:topUpModal.amountLabel")}
+            </Label>
             <Input
               id="topup-amount"
               inputMode="decimal"
@@ -605,9 +628,9 @@ function TopUpDialog({
               autoFocus
               {...register("amount")}
             />
-            {errors.amount && (
+            {errors.amount?.message && (
               <p className="text-sm text-destructive">
-                {errors.amount.message}
+                {t(`goals:${errors.amount.message}` as any)}
               </p>
             )}
           </div>
@@ -618,10 +641,12 @@ function TopUpDialog({
           )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={close}>
-              Скасувати
+              {t("common:buttons.cancel")}
             </Button>
             <Button type="submit" disabled={update.isPending}>
-              {update.isPending ? "Збереження…" : "Поповнити"}
+              {update.isPending
+                ? t("goals:topUpModal.submitting")
+                : t("goals:topUpModal.submit")}
             </Button>
           </DialogFooter>
         </form>
@@ -631,35 +656,38 @@ function TopUpDialog({
 }
 
 function CancelConfirmDialog({
-  goal,
-  loading,
-  error,
-  onCancel,
-  onConfirm,
-}: {
+                               goal,
+                               loading,
+                               error,
+                               onCancel,
+                               onConfirm,
+                             }: {
   goal: Goal | null;
   loading: boolean;
   error: string | null;
   onCancel: () => void;
   onConfirm: () => void;
 }) {
+  const { t } = useTranslation(["goals", "common"]);
+
   return (
     <Dialog open={goal !== null} onOpenChange={(v) => !v && onCancel()}>
       <DialogContent onClose={onCancel}>
         <DialogHeader>
-          <DialogTitle>Скасувати ціль?</DialogTitle>
+          <DialogTitle>{t("goals:cancelModal.title")}</DialogTitle>
           <DialogDescription>
-            Ціль «{goal?.title}» буде позначена як скасована. Її можна буде
-            переглянути у вкладці «Скасовані».
+            {t("goals:cancelModal.description", { title: goal?.title ?? "" })}
           </DialogDescription>
         </DialogHeader>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <DialogFooter>
           <Button variant="outline" onClick={onCancel}>
-            Назад
+            {t("goals:cancelModal.back")}
           </Button>
           <Button variant="destructive" onClick={onConfirm} disabled={loading}>
-            {loading ? "Скасування…" : "Скасувати ціль"}
+            {loading
+              ? t("goals:cancelModal.submitting")
+              : t("goals:cancelModal.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

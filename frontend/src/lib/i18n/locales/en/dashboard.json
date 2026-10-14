@@ -1,0 +1,39 @@
+{
+  "title": "Dashboard",
+  "sectionLinkAll": "See all",
+  "overview": "Financial overview for {{period}}",
+  "stats": {
+    "totalBalance": "Total balance",
+    "activeAccounts_one": "{{count}} active account",
+    "activeAccounts_other": "{{count}} active accounts",
+    "incomeMonth": "Income (month)",
+    "expensesMonth": "Expenses (month)",
+    "goalsProgress": "Goals progress",
+    "activeGoals_one": "{{count}} active goal",
+    "activeGoals_other": "{{count}} active goals",
+    "noActiveGoals": "No active goals"
+  },
+  "charts": {
+    "expensesByCategory": "Expenses by category",
+    "noExpensesMonth": "No expenses this month yet",
+    "total": "Total",
+    "incomeAndExpenses": "Income & Expenses",
+    "forYear": "For {{year}}",
+    "noYearData": "No data for this year yet",
+    "income": "Income",
+    "expense": "Expenses"
+  },
+  "transactions": {
+    "title": "Recent transactions",
+    "subtitle": "Recent activity",
+    "noTransactions": "No transactions yet",
+    "uncategorized": "Uncategorized",
+    "loading": "Loading…"
+  },
+  "goals": {
+    "title": "Active goals",
+    "subtitle": "Savings progress",
+    "noGoals": "No active goals",
+    "loading": "Loading…"
+  }
+}

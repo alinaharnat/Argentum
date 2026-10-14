@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import {
   Plus,
   Pencil,
@@ -31,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { getErrorMessage } from "@/lib/axios";
+import { formatMoney } from "@/features/analytics/utils";
 import {
   useAccounts,
   useActivateAccount,
@@ -46,31 +48,14 @@ import {
 } from "../schemas";
 import { AccountType, type Account, type GetAccountsQuery } from "../types";
 
-const typeLabels: Record<AccountType, string> = {
-  [AccountType.Cash]: "Готівка",
-  [AccountType.Bank]: "Банк",
-  [AccountType.Savings]: "Заощадження",
-};
-
 const typeIcons: Record<AccountType, typeof Wallet> = {
   [AccountType.Cash]: Wallet,
   [AccountType.Bank]: Banknote,
   [AccountType.Savings]: PiggyBank,
 };
 
-function formatBalance(amount: number, currency: string) {
-  try {
-    return new Intl.NumberFormat("uk-UA", {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 2,
-    }).format(amount);
-  } catch {
-    return `${amount.toFixed(2)} ${currency}`;
-  }
-}
-
 export function AccountsPage() {
+  const { t } = useTranslation("accounts");
   const [filters, setFilters] = useState<GetAccountsQuery>({});
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<Account | null>(null);
@@ -81,26 +66,29 @@ export function AccountsPage() {
 
   const accounts = data?.data ?? [];
 
+  const typeLabels: Record<AccountType, string> = {
+    [AccountType.Cash]: t("types.cash"),
+    [AccountType.Bank]: t("types.bank"),
+    [AccountType.Savings]: t("types.savings"),
+  };
+
   return (
     <div className="space-y-6 p-4 md:p-8">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Рахунки</h2>
-          <p className="text-muted-foreground">
-            Керуйте своїми гаманцями, банківськими та накопичувальними
-            рахунками
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight">{t("title")}</h2>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <Button onClick={() => setCreateOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Додати рахунок
+          {t("addAccount")}
         </Button>
       </div>
 
       <div className="flex flex-wrap gap-3">
         <div className="w-44">
           <Label className="mb-1.5 block text-xs text-muted-foreground">
-            Тип
+            {t("filters.type")}
           </Label>
           <Select
             value={filters.type ?? ""}
@@ -111,15 +99,15 @@ export function AccountsPage() {
               }))
             }
           >
-            <option value="">Всі типи</option>
-            <option value={AccountType.Cash}>Готівка</option>
-            <option value={AccountType.Bank}>Банк</option>
-            <option value={AccountType.Savings}>Заощадження</option>
+            <option value="">{t("filters.allTypes")}</option>
+            <option value={AccountType.Cash}>{t("types.cash")}</option>
+            <option value={AccountType.Bank}>{t("types.bank")}</option>
+            <option value={AccountType.Savings}>{t("types.savings")}</option>
           </Select>
         </div>
         <div className="w-44">
           <Label className="mb-1.5 block text-xs text-muted-foreground">
-            Статус
+            {t("filters.status")}
           </Label>
           <Select
             value={
@@ -133,15 +121,15 @@ export function AccountsPage() {
               }));
             }}
           >
-            <option value="">Усі</option>
-            <option value="true">Активні</option>
-            <option value="false">Архів</option>
+            <option value="">{t("filters.allStatuses")}</option>
+            <option value="true">{t("filters.active")}</option>
+            <option value="false">{t("filters.archive")}</option>
           </Select>
         </div>
       </div>
 
       {isLoading && (
-        <p className="text-sm text-muted-foreground">Завантаження…</p>
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
       )}
       {isError && (
         <p className="text-sm text-destructive">{getErrorMessage(error)}</p>
@@ -150,7 +138,7 @@ export function AccountsPage() {
       {!isLoading && accounts.length === 0 && (
         <Card>
           <CardContent className="flex h-40 items-center justify-center text-muted-foreground">
-            Поки немає рахунків. Створіть перший, щоб почати облік.
+            {t("empty")}
           </CardContent>
         </Card>
       )}
@@ -171,7 +159,7 @@ export function AccountsPage() {
                       {typeLabels[acc.type]}
                       {!acc.isActive && (
                         <span className="ml-1 rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase">
-                          архів
+                          {t("statusBadge.archived")}
                         </span>
                       )}
                     </CardDescription>
@@ -181,7 +169,7 @@ export function AccountsPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="text-2xl font-bold">
-                  {formatBalance(acc.balance, acc.currency)}
+                  {formatMoney(acc.balance, acc.currency)}
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -190,7 +178,7 @@ export function AccountsPage() {
                     onClick={() => setEditing(acc)}
                   >
                     <Pencil className="mr-1.5 h-3.5 w-3.5" />
-                    Редагувати
+                    {t("actions.edit")}
                   </Button>
                   {acc.isActive ? (
                     <Button
@@ -200,7 +188,7 @@ export function AccountsPage() {
                       onClick={() => deactivate.mutate(acc._id)}
                     >
                       <PowerOff className="mr-1.5 h-3.5 w-3.5" />
-                      В архів
+                      {t("actions.toArchive")}
                     </Button>
                   ) : (
                     <Button
@@ -210,7 +198,7 @@ export function AccountsPage() {
                       onClick={() => activate.mutate(acc._id)}
                     >
                       <Power className="mr-1.5 h-3.5 w-3.5" />
-                      Активувати
+                      {t("actions.activate")}
                     </Button>
                   )}
                 </div>
@@ -233,12 +221,13 @@ export function AccountsPage() {
 }
 
 function CreateAccountDialog({
-  open,
-  onOpenChange,
-}: {
+                               open,
+                               onOpenChange,
+                             }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { t } = useTranslation(["accounts", "common"]);
   const create = useCreateAccount();
   const {
     register,
@@ -281,37 +270,43 @@ function CreateAccountDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent onClose={close}>
         <DialogHeader>
-          <DialogTitle>Новий рахунок</DialogTitle>
+          <DialogTitle>{t("accounts:createModal.title")}</DialogTitle>
           <DialogDescription>
-            Введіть назву, тип та (за бажанням) початковий баланс
+            {t("accounts:createModal.description")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Назва</Label>
+            <Label htmlFor="name">{t("accounts:createModal.title")}</Label>
             <Input
               id="name"
-              placeholder="Картка ПриватБанк"
+              placeholder={t("accounts:createModal.namePlaceholder")}
               {...register("name")}
             />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name.message}</p>
+            {errors.name?.message && (
+              <p className="text-sm text-destructive">
+                {t(`accounts:${errors.name.message}` as any)}
+              </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="type">Тип</Label>
+            <Label htmlFor="type">{t("accounts:filters.type")}</Label>
             <Select id="type" {...register("type")}>
-              <option value={AccountType.Cash}>Готівка</option>
-              <option value={AccountType.Bank}>Банк</option>
-              <option value={AccountType.Savings}>Заощадження</option>
+              <option value={AccountType.Cash}>{t("accounts:types.cash")}</option>
+              <option value={AccountType.Bank}>{t("accounts:types.bank")}</option>
+              <option value={AccountType.Savings}>{t("accounts:types.savings")}</option>
             </Select>
-            {errors.type && (
-              <p className="text-sm text-destructive">{errors.type.message}</p>
+            {errors.type?.message && (
+              <p className="text-sm text-destructive">
+                {t(`accounts:${errors.type.message}` as any)}
+              </p>
             )}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="balance">Початковий баланс</Label>
+              <Label htmlFor="balance">
+                {t("accounts:createModal.initialBalance")}
+              </Label>
               <Input
                 id="balance"
                 type="number"
@@ -319,23 +314,25 @@ function CreateAccountDialog({
                 placeholder="0.00"
                 {...register("balance")}
               />
-              {errors.balance && (
+              {errors.balance?.message && (
                 <p className="text-sm text-destructive">
-                  {errors.balance.message}
+                  {t(`accounts:${errors.balance.message}` as any)}
                 </p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="currency">Валюта</Label>
+              <Label htmlFor="currency">
+                {t("accounts:createModal.currency")}
+              </Label>
               <Input
                 id="currency"
                 placeholder="UAH"
                 maxLength={3}
                 {...register("currency")}
               />
-              {errors.currency && (
+              {errors.currency?.message && (
                 <p className="text-sm text-destructive">
-                  {errors.currency.message}
+                  {t(`accounts:${errors.currency.message}` as any)}
                 </p>
               )}
             </div>
@@ -347,10 +344,12 @@ function CreateAccountDialog({
           )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={close}>
-              Скасувати
+              {t("common:buttons.cancel")}
             </Button>
             <Button type="submit" disabled={create.isPending}>
-              {create.isPending ? "Створення…" : "Створити"}
+              {create.isPending
+                ? t("accounts:createModal.submitting")
+                : t("accounts:createModal.submit")}
             </Button>
           </DialogFooter>
         </form>
@@ -360,12 +359,13 @@ function CreateAccountDialog({
 }
 
 function EditAccountDialog({
-  account,
-  onClose,
-}: {
+                             account,
+                             onClose,
+                           }: {
   account: Account | null;
   onClose: () => void;
 }) {
+  const { t } = useTranslation(["accounts", "common"]);
   const edit = useEditAccount(account?._id ?? "");
   const {
     register,
@@ -404,40 +404,46 @@ function EditAccountDialog({
     <Dialog open={account !== null} onOpenChange={(v) => !v && close()}>
       <DialogContent onClose={close}>
         <DialogHeader>
-          <DialogTitle>Редагування рахунку</DialogTitle>
+          <DialogTitle>{t("accounts:editModal.title")}</DialogTitle>
           <DialogDescription>
-            Зміна балансу відбувається через транзакції
+            {t("accounts:editModal.description")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="edit-name">Назва</Label>
+            <Label htmlFor="edit-name">{t("accounts:createModal.title")}</Label>
             <Input id="edit-name" {...register("name")} />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name.message}</p>
+            {errors.name?.message && (
+              <p className="text-sm text-destructive">
+                {t(`accounts:${errors.name.message}` as any)}
+              </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-type">Тип</Label>
+            <Label htmlFor="edit-type">{t("accounts:filters.type")}</Label>
             <Select id="edit-type" {...register("type")}>
-              <option value={AccountType.Cash}>Готівка</option>
-              <option value={AccountType.Bank}>Банк</option>
-              <option value={AccountType.Savings}>Заощадження</option>
+              <option value={AccountType.Cash}>{t("accounts:types.cash")}</option>
+              <option value={AccountType.Bank}>{t("accounts:types.bank")}</option>
+              <option value={AccountType.Savings}>{t("accounts:types.savings")}</option>
             </Select>
-            {errors.type && (
-              <p className="text-sm text-destructive">{errors.type.message}</p>
+            {errors.type?.message && (
+              <p className="text-sm text-destructive">
+                {t(`accounts:${errors.type.message}` as any)}
+              </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-currency">Валюта</Label>
+            <Label htmlFor="edit-currency">
+              {t("accounts:createModal.currency")}
+            </Label>
             <Input
               id="edit-currency"
               maxLength={3}
               {...register("currency")}
             />
-            {errors.currency && (
+            {errors.currency?.message && (
               <p className="text-sm text-destructive">
-                {errors.currency.message}
+                {t(`accounts:${errors.currency.message}` as any)}
               </p>
             )}
           </div>
@@ -448,10 +454,12 @@ function EditAccountDialog({
           )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={close}>
-              Скасувати
+              {t("common:buttons.cancel")}
             </Button>
             <Button type="submit" disabled={edit.isPending}>
-              {edit.isPending ? "Збереження…" : "Зберегти"}
+              {edit.isPending
+                ? t("accounts:editModal.submitting")
+                : t("accounts:editModal.submit")}
             </Button>
           </DialogFooter>
         </form>

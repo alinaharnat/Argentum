@@ -1,26 +1,20 @@
+import i18n from "@/lib/i18n";
 import { CategoryType, type Category } from "./types";
 
-const SYSTEM_NAME_TRANSLATIONS: Record<string, string> = {
-  food: "Їжа",
-  transport: "Транспорт",
-  shopping: "Покупки",
-  entertainment: "Розваги",
-  health: "Здоровʼя",
-  education: "Освіта",
-  bills: "Комунальні",
-  travel: "Подорожі",
-  housing: "Житло",
-  salary: "Зарплата",
-  freelance: "Фріланс",
-  investments: "Інвестиції",
-  gifts: "Подарунки",
-};
-
-const SYSTEM_NAME_BY_TYPE: Record<string, Partial<Record<CategoryType, string>>> = {
-  other: {
-    [CategoryType.Expense]: "Інші витрати",
-    [CategoryType.Income]: "Інші доходи",
-  },
+const SYSTEM_CATEGORY_KEYS: Record<string, string> = {
+  food: "categories:systemCategories.food",
+  transport: "categories:systemCategories.transport",
+  shopping: "categories:systemCategories.shopping",
+  entertainment: "categories:systemCategories.entertainment",
+  health: "categories:systemCategories.health",
+  education: "categories:systemCategories.education",
+  bills: "categories:systemCategories.bills",
+  travel: "categories:systemCategories.travel",
+  housing: "categories:systemCategories.housing",
+  salary: "categories:systemCategories.salary",
+  freelance: "categories:systemCategories.freelance",
+  investments: "categories:systemCategories.investments",
+  gifts: "categories:systemCategories.gifts",
 };
 
 function capitalize(name: string): string {
@@ -35,19 +29,15 @@ export function getCategoryDisplayName(category: {
 }): string {
   if (category.scope === "system") {
     const key = category.name.toLowerCase();
-    const byType = SYSTEM_NAME_BY_TYPE[key]?.[category.type];
-    if (byType) return byType;
-    return SYSTEM_NAME_TRANSLATIONS[key] ?? capitalize(category.name);
+    if (key === "other") {
+      return category.type === CategoryType.Expense
+        ? i18n.t("categories:systemCategories.otherExpense")
+        : i18n.t("categories:systemCategories.otherIncome");
+    }
+    const translationKey = SYSTEM_CATEGORY_KEYS[key];
+    if (translationKey) {
+      return i18n.t(translationKey);
+    }
   }
   return capitalize(category.name);
 }
-
-export const categoryTypeLabels: Record<CategoryType, string> = {
-  [CategoryType.Income]: "Дохід",
-  [CategoryType.Expense]: "Витрата",
-};
-
-export const categoryTypePluralLabels: Record<CategoryType, string> = {
-  [CategoryType.Income]: "Доходи",
-  [CategoryType.Expense]: "Витрати",
-};

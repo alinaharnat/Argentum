@@ -1,0 +1,50 @@
+{
+  "title": "Budgets",
+  "subtitle": "Monthly spending limits by category",
+  "newBudget": "New budget",
+  "prevMonth": "Previous month",
+  "nextMonth": "Next month",
+  "currentMonth": "Current month",
+  "exceededBadge": "Exceeded: {{count}}",
+  "loading": "Loading…",
+  "stats": {
+    "totalLimit": "Total limit",
+    "spent": "Spent",
+    "remaining": "Remaining"
+  },
+  "empty": "No budgets set for {{period}} yet.",
+  "createFirst": "Create first budget",
+  "card": {
+    "categoryDefault": "Category",
+    "used": "{{percent}}% used",
+    "edit": "Edit budget",
+    "fromLimit": "of {{limit}}",
+    "exceededBy": "Exceeded by {{amount}}",
+    "remainingLabel": "Remaining:"
+  },
+  "createModal": {
+    "title": "New budget",
+    "description": "Spending limit for {{period}}",
+    "noCategoriesNotice": "Budgets have already been set for all expense categories this month. Create a new expense category or select another month.",
+    "category": "Expense category",
+    "selectCategory": "Select a category",
+    "loadingCategories": "Loading…",
+    "limit": "Limit",
+    "submitting": "Saving…",
+    "submit": "Create"
+  },
+  "editModal": {
+    "title": "Edit budget",
+    "description": "Edit budget limit for category",
+    "spentSoFar": "Spent so far:",
+    "limit": "Limit",
+    "submitting": "Saving…",
+    "submit": "Save"
+  },
+  "validation": {
+    "enterAmount": "Enter amount",
+    "amountNumber": "Amount must be a number, e.g. 5000",
+    "amountPositive": "Amount must be greater than 0",
+    "selectCategory": "Select a category"
+  }
+}

@@ -29,6 +29,7 @@ import {
   Briefcase,
   type LucideIcon,
 } from "lucide-react";
+import i18n from "@/lib/i18n";
 import { IconName } from "./types";
 
 export const iconMap: Record<IconName, LucideIcon> = {
@@ -62,44 +63,17 @@ export const iconMap: Record<IconName, LucideIcon> = {
   [IconName.Work]: Briefcase,
 };
 
-export const iconLabels: Record<IconName, string> = {
-  [IconName.Folder]: "Папка",
-  [IconName.Other]: "Інше",
-  [IconName.Home]: "Дім",
-  [IconName.Utilities]: "Комунальні",
-  [IconName.Car]: "Авто",
-  [IconName.Transport]: "Транспорт",
-  [IconName.Food]: "Їжа",
-  [IconName.Cafe]: "Кафе",
-  [IconName.Shopping]: "Покупки",
-  [IconName.Entertainment]: "Розваги",
-  [IconName.Hobbies]: "Хобі",
-  [IconName.Health]: "Здоровʼя",
-  [IconName.Pharmacy]: "Аптека",
-  [IconName.Education]: "Освіта",
-  [IconName.Travel]: "Подорожі",
-  [IconName.Sport]: "Спорт",
-  [IconName.Beauty]: "Краса",
-  [IconName.Pets]: "Тварини",
-  [IconName.Subscriptions]: "Підписки",
-  [IconName.Wallet]: "Гаманець",
-  [IconName.Salary]: "Зарплата",
-  [IconName.Gift]: "Подарунок",
-  [IconName.Investment]: "Інвестиції",
-  [IconName.Bonus]: "Бонус",
-  [IconName.Refund]: "Повернення",
-  [IconName.Charity]: "Благодійність",
-  [IconName.Family]: "Сімʼя",
-  [IconName.Work]: "Робота",
-};
+export function getIconLabel(iconName: IconName): string {
+  return i18n.t(`categories:icons.${iconName}` as any);
+}
 
 export const allIcons = Object.values(IconName) as IconName[];
 
 export function CategoryIcon({
-  icon,
-  color,
-  className = "h-4 w-4",
-}: {
+                               icon,
+                               color,
+                               className = "h-4 w-4",
+                             }: {
   icon: IconName;
   color?: string;
   className?: string;

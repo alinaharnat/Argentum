@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   PieChart,
   Pie,
@@ -49,7 +50,7 @@ import {
   useSummary,
 } from "@/features/analytics/hooks";
 import {
-  MONTH_SHORT,
+  getShortMonths,
   formatCompact,
   formatMoney,
   formatPeriodLabel,
@@ -60,6 +61,7 @@ import {
 const FALLBACK_COLOR = "#94a3b8";
 
 export function DashboardPage() {
+  const { t, i18n } = useTranslation("dashboard");
   const period = getCurrentPeriod();
   const year = getCurrentYear();
 
@@ -77,15 +79,16 @@ export function DashboardPage() {
 
   const categories = useMemo(
     () => categoriesQuery.data?.data ?? [],
-    [categoriesQuery.data],
+    [categoriesQuery.data]
   );
   const categoryMap = useMemo(
     () => new Map(categories.map((c) => [c._id, c])),
-    [categories],
+    [categories]
   );
 
   const accounts = accountsQuery.data?.data ?? [];
   const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+  const mainCurrency = accounts[0]?.currency ?? "USD";
 
   const summary = summaryQuery.data;
 
@@ -107,21 +110,23 @@ export function DashboardPage() {
             categoryId: item.categoryId,
             name: category
               ? getCategoryDisplayName(category)
-              : (item.categoryName ?? "Інше"),
+              : item.categoryName ?? t("transactions.uncategorized"),
             total: item.total,
             fill: category?.color ?? FALLBACK_COLOR,
           };
         })
         .sort((a, b) => b.total - a.total),
-    [expensesQuery.data, categoryMap],
+    [expensesQuery.data, categoryMap, t]
   );
   const expensesTotal = expenseChartData.reduce((s, e) => s + e.total, 0);
 
   const monthlyData = useMemo(() => {
     const byMonth = new Map(
-      (monthlyQuery.data?.data ?? []).map((m) => [m.month, m]),
+      (monthlyQuery.data?.data ?? []).map((m) => [m.month, m])
     );
-    return MONTH_SHORT.map((label, index) => {
+    const months = getShortMonths();
+
+    return months.map((label, index) => {
       const stat = byMonth.get(index + 1);
       return {
         label,
@@ -129,9 +134,9 @@ export function DashboardPage() {
         expense: stat?.expense ?? 0,
       };
     });
-  }, [monthlyQuery.data]);
+  }, [monthlyQuery.data, i18n.language]);
   const monthlyHasData = monthlyData.some(
-    (m) => m.income > 0 || m.expense > 0,
+    (m) => m.income > 0 || m.expense > 0
   );
 
   const transactions = transactionsQuery.data?.data ?? [];
@@ -139,41 +144,43 @@ export function DashboardPage() {
   return (
     <div className="space-y-6 p-4 md:p-8">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Дашборд</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("title")}</h2>
         <p className="text-muted-foreground">
-          Огляд ваших фінансів за {formatPeriodLabel(period)}
+          {t("overview", { period: formatPeriodLabel(period) })}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Загальний баланс"
+          label={t("stats.totalBalance")}
           icon={Wallet}
-          value={
-            accountsQuery.isLoading ? "…" : formatMoney(totalBalance)
-          }
-          hint={`${accounts.length} активних рахунків`}
+          value={accountsQuery.isLoading ? "…" : formatMoney(totalBalance, mainCurrency)}
+          hint={t("stats.activeAccounts", { count: accounts.length })}
         />
         <StatCard
-          label="Доходи (місяць)"
+          label={t("stats.incomeMonth")}
           icon={TrendingUp}
-          value={summaryQuery.isLoading ? "…" : formatMoney(summary?.totalIncome ?? 0)}
+          value={
+            summaryQuery.isLoading
+              ? "…"
+              : formatMoney(summary?.totalIncome ?? 0, mainCurrency)
+          }
           valueClass="text-emerald-600"
           hint={formatPeriodLabel(period)}
         />
         <StatCard
-          label="Витрати (місяць)"
+          label={t("stats.expensesMonth")}
           icon={TrendingDown}
           value={
             summaryQuery.isLoading
               ? "…"
-              : formatMoney(summary?.totalExpenses ?? 0)
+              : formatMoney(summary?.totalExpenses ?? 0, mainCurrency)
           }
           valueClass="text-rose-600"
           hint={formatPeriodLabel(period)}
         />
         <StatCard
-          label="Прогрес цілей"
+          label={t("stats.goalsProgress")}
           icon={Target}
           value={
             goalsQuery.isLoading
@@ -184,8 +191,8 @@ export function DashboardPage() {
           }
           hint={
             activeGoals.length > 0
-              ? `${activeGoals.length} активних цілей`
-              : "Немає активних цілей"
+              ? t("stats.activeGoals", { count: activeGoals.length })
+              : t("stats.noActiveGoals")
           }
         />
       </div>
@@ -193,18 +200,20 @@ export function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Витрати за категоріями</CardTitle>
+            <CardTitle>{t("charts.expensesByCategory")}</CardTitle>
             <CardDescription>{formatPeriodLabel(period)}</CardDescription>
           </CardHeader>
           <CardContent>
-            {expensesQuery.isLoading && <ChartSkeleton />}
+            {expensesQuery.isLoading && (
+              <ChartSkeleton label={t("transactions.loading")} />
+            )}
             {expensesQuery.isError && (
               <ChartError message={getErrorMessage(expensesQuery.error)} />
             )}
             {!expensesQuery.isLoading &&
               !expensesQuery.isError &&
               expenseChartData.length === 0 && (
-                <ChartEmpty message="За цей місяць витрат ще немає" />
+                <ChartEmpty message={t("charts.noExpensesMonth")} />
               )}
             {!expensesQuery.isLoading &&
               !expensesQuery.isError &&
@@ -224,16 +233,16 @@ export function DashboardPage() {
                           paddingAngle={2}
                         />
                         <Tooltip
-                          formatter={(value) => formatMoney(Number(value))}
+                          formatter={(value) => formatMoney(Number(value), mainCurrency)}
                         />
                       </PieChart>
                     </ResponsiveContainer>
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
                       <span className="text-xs text-muted-foreground">
-                        Усього
+                        {t("charts.total")}
                       </span>
                       <span className="text-lg font-semibold">
-                        {formatMoney(expensesTotal)}
+                        {formatMoney(expensesTotal, mainCurrency)}
                       </span>
                     </div>
                   </div>
@@ -257,7 +266,7 @@ export function DashboardPage() {
                           %
                         </span>
                         <span className="w-28 text-right font-medium">
-                          {formatMoney(entry.total)}
+                          {formatMoney(entry.total, mainCurrency)}
                         </span>
                       </div>
                     ))}
@@ -269,18 +278,20 @@ export function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Доходи та витрати</CardTitle>
-            <CardDescription>За {year} рік</CardDescription>
+            <CardTitle>{t("charts.incomeAndExpenses")}</CardTitle>
+            <CardDescription>{t("charts.forYear", { year })}</CardDescription>
           </CardHeader>
           <CardContent>
-            {monthlyQuery.isLoading && <ChartSkeleton />}
+            {monthlyQuery.isLoading && (
+              <ChartSkeleton label={t("transactions.loading")} />
+            )}
             {monthlyQuery.isError && (
               <ChartError message={getErrorMessage(monthlyQuery.error)} />
             )}
             {!monthlyQuery.isLoading && !monthlyQuery.isError && (
               <>
                 {!monthlyHasData && (
-                  <ChartEmpty message="За цей рік даних ще немає" />
+                  <ChartEmpty message={t("charts.noYearData")} />
                 )}
                 {monthlyHasData && (
                   <ResponsiveContainer width="100%" height={300}>
@@ -300,19 +311,19 @@ export function DashboardPage() {
                         tickFormatter={formatCompact}
                       />
                       <Tooltip
-                        formatter={(value) => formatMoney(Number(value))}
+                        formatter={(value) => formatMoney(Number(value), mainCurrency)}
                         cursor={{ fill: "rgba(0,0,0,0.04)" }}
                       />
                       <Legend />
                       <Bar
                         dataKey="income"
-                        name="Доходи"
+                        name={t("charts.income")}
                         fill="#10b981"
                         radius={[4, 4, 0, 0]}
                       />
                       <Bar
                         dataKey="expense"
-                        name="Витрати"
+                        name={t("charts.expense")}
                         fill="#f43f5e"
                         radius={[4, 4, 0, 0]}
                       />
@@ -329,15 +340,15 @@ export function DashboardPage() {
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <div className="space-y-1.5">
-              <CardTitle>Останні транзакції</CardTitle>
-              <CardDescription>Нещодавні операції</CardDescription>
+              <CardTitle>{t("transactions.title")}</CardTitle>
+              <CardDescription>{t("transactions.subtitle")}</CardDescription>
             </div>
-            <SectionLink to="/transactions" />
+            <SectionLink to="/transactions" label={t("sectionLinkAll")} />
           </CardHeader>
           <CardContent>
             {transactionsQuery.isLoading && (
               <p className="py-8 text-center text-sm text-muted-foreground">
-                Завантаження…
+                {t("transactions.loading")}
               </p>
             )}
             {transactionsQuery.isError && (
@@ -350,7 +361,7 @@ export function DashboardPage() {
               transactions.length === 0 && (
                 <div className="flex flex-col items-center gap-2 py-10 text-muted-foreground">
                   <Receipt className="h-8 w-8 opacity-40" />
-                  <p className="text-sm">Транзакцій ще немає</p>
+                  <p className="text-sm">{t("transactions.noTransactions")}</p>
                 </div>
               )}
             {!transactionsQuery.isLoading && transactions.length > 0 && (
@@ -386,7 +397,7 @@ export function DashboardPage() {
                         <div className="truncate text-sm font-medium">
                           {category
                             ? getCategoryDisplayName(category)
-                            : "Без категорії"}
+                            : t("transactions.uncategorized")}
                         </div>
                         <div className="truncate text-xs text-muted-foreground">
                           {transaction.description ||
@@ -396,11 +407,11 @@ export function DashboardPage() {
                       <div
                         className={cn(
                           "shrink-0 text-sm font-semibold",
-                          isIncome ? "text-emerald-600" : "text-rose-600",
+                          isIncome ? "text-emerald-600" : "text-rose-600"
                         )}
                       >
                         {isIncome ? "+" : "−"}
-                        {formatMoney(transaction.amount)}
+                        {formatMoney(transaction.amount, transaction.currency)}
                       </div>
                     </div>
                   );
@@ -413,15 +424,15 @@ export function DashboardPage() {
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <div className="space-y-1.5">
-              <CardTitle>Активні цілі</CardTitle>
-              <CardDescription>Прогрес накопичення</CardDescription>
+              <CardTitle>{t("goals.title")}</CardTitle>
+              <CardDescription>{t("goals.subtitle")}</CardDescription>
             </div>
-            <SectionLink to="/goals" />
+            <SectionLink to="/goals" label={t("sectionLinkAll")} />
           </CardHeader>
           <CardContent>
             {goalsQuery.isLoading && (
               <p className="py-8 text-center text-sm text-muted-foreground">
-                Завантаження…
+                {t("goals.loading")}
               </p>
             )}
             {goalsQuery.isError && (
@@ -434,7 +445,7 @@ export function DashboardPage() {
               activeGoals.length === 0 && (
                 <div className="flex flex-col items-center gap-2 py-10 text-muted-foreground">
                   <Target className="h-8 w-8 opacity-40" />
-                  <p className="text-sm">Активних цілей немає</p>
+                  <p className="text-sm">{t("goals.noGoals")}</p>
                 </div>
               )}
             {!goalsQuery.isLoading && activeGoals.length > 0 && (
@@ -468,12 +479,12 @@ export function DashboardPage() {
 }
 
 function StatCard({
-  label,
-  value,
-  hint,
-  valueClass,
-  icon: Icon,
-}: {
+                    label,
+                    value,
+                    hint,
+                    valueClass,
+                    icon: Icon,
+                  }: {
   label: string;
   value: string;
   hint: string;
@@ -496,22 +507,22 @@ function StatCard({
   );
 }
 
-function SectionLink({ to }: { to: string }) {
+function SectionLink({ to, label = "Усі" }: { to: string; label?: string }) {
   return (
     <Link
       to={to}
       className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
     >
-      Усі
+      {label}
       <ArrowRight className="h-3.5 w-3.5" />
     </Link>
   );
 }
 
-function ChartSkeleton() {
+function ChartSkeleton({ label = "Завантаження…" }: { label?: string }) {
   return (
     <div className="flex h-60 items-center justify-center text-sm text-muted-foreground">
-      Завантаження…
+      {label}
     </div>
   );
 }

@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "accounts": "Accounts",
+    "transactions": "Transactions",
+    "categories": "Categories",
+    "budgets": "Budgets",
+    "goals": "Goals",
+    "logout": "Log Out",
+    "language": "Language: English",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "loading": "Loading..."
+  },
+  "errors": {
+    "required": "This field is required",
+    "somethingWentWrong": "Something went wrong",
+    "networkError": "Server is unavailable. Please make sure backend is running.",
+    "unknownError": "Unknown error",
+    "api": {
+      "invalidCredentials": "Invalid email or password",
+      "userNotFound": "Invalid email or password",
+      "emailExists": "User with this email already exists",
+      "userExists": "User with this email already exists"
+    }
+  }
+}

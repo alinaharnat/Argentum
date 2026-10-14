@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Receipt,
   Wallet,
@@ -12,49 +13,21 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/ui/logo";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { cn } from "@/lib/utils";
 import { isAuthenticated } from "@/features/auth/token";
 
-const features = [
-  {
-    icon: CreditCard,
-    title: "Рахунки",
-    description:
-      "Керуйте всіма своїми рахунками в одному місці — від готівки до карток.",
-  },
-  {
-    icon: Receipt,
-    title: "Транзакції",
-    description:
-      "Фіксуйте доходи та витрати з фільтрами, сортуванням і категоріями.",
-  },
-  {
-    icon: Tags,
-    title: "Категорії",
-    description:
-      "Гнучкі категорії з іконками, щоб бачити, на що насправді йдуть гроші.",
-  },
-  {
-    icon: Wallet,
-    title: "Бюджети",
-    description:
-      "Встановлюйте ліміти на категорії та контролюйте витрати протягом місяця.",
-  },
-  {
-    icon: Target,
-    title: "Цілі",
-    description:
-      "Накопичуйте на мрії та відстежуйте прогрес до кожної фінансової цілі.",
-  },
-  {
-    icon: BarChart3,
-    title: "Аналітика",
-    description:
-      "Наочні графіки доходів, витрат і динаміки за місяцями та категоріями.",
-  },
-];
+const featureKeys = [
+  { icon: CreditCard, key: "accounts" },
+  { icon: Receipt, key: "transactions" },
+  { icon: Tags, key: "categories" },
+  { icon: Wallet, key: "budgets" },
+  { icon: Target, key: "goals" },
+  { icon: BarChart3, key: "analytics" },
+] as const;
 
 export function LandingPage() {
+  const { t } = useTranslation("landing");
   const authed = isAuthenticated();
 
   return (
@@ -64,24 +37,27 @@ export function LandingPage() {
           <Logo className="h-7 w-7" />
           <h1 className="text-xl font-bold tracking-tight">Argentum</h1>
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher />
+
           {authed ? (
             <Link to="/dashboard" className={cn(buttonVariants())}>
-              До дашборду
-              <ArrowRight className="h-4 w-4" />
+              {t("header.toDashboard")}
+              <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           ) : (
-            <>
+            <div className="flex items-center gap-2">
               <Link
                 to="/login"
                 className={cn(buttonVariants({ variant: "ghost" }))}
               >
-                Увійти
+                {t("header.login")}
               </Link>
               <Link to="/register" className={cn(buttonVariants())}>
-                Зареєструватись
+                {t("header.register")}
               </Link>
-            </>
+            </div>
           )}
         </div>
       </header>
@@ -90,12 +66,10 @@ export function LandingPage() {
         {/* Hero */}
         <section className="mx-auto max-w-5xl px-4 py-20 text-center sm:px-8 sm:py-28">
           <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Ваші фінанси під контролем
+            {t("hero.title")}
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Argentum — це особистий фінансовий помічник: рахунки, транзакції,
-            бюджети, цілі та аналітика в одному застосунку. Плануйте, відстежуйте
-            та досягайте своїх фінансових цілей.
+            {t("hero.description")}
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             {authed ? (
@@ -103,8 +77,8 @@ export function LandingPage() {
                 to="/dashboard"
                 className={cn(buttonVariants({ size: "lg" }))}
               >
-                Перейти до дашборду
-                <ArrowRight className="h-4 w-4" />
+                {t("hero.goToDashboard")}
+                <ArrowRight className="h-4 w-4 ml-1" />
               </Link>
             ) : (
               <>
@@ -112,14 +86,14 @@ export function LandingPage() {
                   to="/register"
                   className={cn(buttonVariants({ size: "lg" }))}
                 >
-                  Почати безкоштовно
-                  <ArrowRight className="h-4 w-4" />
+                  {t("hero.startFree")}
+                  <ArrowRight className="h-4 w-4 ml-1" />
                 </Link>
                 <Link
                   to="/login"
                   className={cn(buttonVariants({ size: "lg", variant: "outline" }))}
                 >
-                  У мене вже є акаунт
+                  {t("hero.alreadyHaveAccount")}
                 </Link>
               </>
             )}
@@ -129,14 +103,16 @@ export function LandingPage() {
         {/* Features */}
         <section className="mx-auto max-w-5xl px-4 pb-12 sm:px-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map(({ icon: Icon, title, description }) => (
-              <Card key={title}>
+            {featureKeys.map(({ icon: Icon, key }) => (
+              <Card key={key}>
                 <CardContent className="space-y-3 p-6">
                   <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="font-semibold">{title}</h3>
-                  <p className="text-sm text-muted-foreground">{description}</p>
+                  <h3 className="font-semibold">{t(`features.${key}.title`)}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {t(`features.${key}.description`)}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -152,19 +128,17 @@ export function LandingPage() {
                   <Lock className="h-6 w-6" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold">Потрібна реєстрація</h3>
+                  <h3 className="text-lg font-semibold">{t("notice.title")}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Перегляд дашборду, рахунків, транзакцій, бюджетів, цілей та
-                    аналітики доступний лише зареєстрованим користувачам. Створіть
-                    безкоштовний акаунт, щоб почати керувати своїми фінансами.
+                    {t("notice.description")}
                   </p>
                 </div>
                 <Link
                   to="/register"
                   className={cn(buttonVariants(), "shrink-0")}
                 >
-                  Створити акаунт
-                  <ArrowRight className="h-4 w-4" />
+                  {t("notice.createAccount")}
+                  <ArrowRight className="h-4 w-4 ml-1" />
                 </Link>
               </CardContent>
             </Card>

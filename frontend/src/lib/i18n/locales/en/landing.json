@@ -1,0 +1,45 @@
+{
+  "header": {
+    "toDashboard": "To Dashboard",
+    "login": "Sign In",
+    "register": "Sign Up"
+  },
+  "hero": {
+    "title": "Your finances under control",
+    "description": "Argentum is a personal financial assistant: accounts, transactions, budgets, goals, and analytics in one app. Plan, track, and achieve your financial goals.",
+    "goToDashboard": "Go to Dashboard",
+    "startFree": "Get Started for Free",
+    "alreadyHaveAccount": "I already have an account"
+  },
+  "features": {
+    "accounts": {
+      "title": "Accounts",
+      "description": "Manage all your accounts in one place — from cash to credit cards."
+    },
+    "transactions": {
+      "title": "Transactions",
+      "description": "Record income and expenses with filters, sorting, and categories."
+    },
+    "categories": {
+      "title": "Categories",
+      "description": "Flexible categories with icons to see where your money actually goes."
+    },
+    "budgets": {
+      "title": "Budgets",
+      "description": "Set category limits and control your spending throughout the month."
+    },
+    "goals": {
+      "title": "Goals",
+      "description": "Save up for dreams and track progress toward every financial goal."
+    },
+    "analytics": {
+      "title": "Analytics",
+      "description": "Visual charts for income, expenses, and monthly dynamics by category."
+    }
+  },
+  "notice": {
+    "title": "Registration Required",
+    "description": "Viewing the dashboard, accounts, transactions, budgets, goals, and analytics is available to registered users only. Create a free account to start managing your finances.",
+    "createAccount": "Create Account"
+  }
+}

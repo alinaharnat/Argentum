@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import {
   Plus,
   Pencil,
@@ -39,11 +40,8 @@ import {
   type Category,
   type GetCategoriesQuery,
 } from "../types";
-import { CategoryIcon, allIcons, iconLabels } from "../icons";
-import {
-  getCategoryDisplayName,
-  categoryTypePluralLabels,
-} from "../labels";
+import { CategoryIcon, allIcons, getIconLabel } from "../icons";
+import { getCategoryDisplayName } from "../labels";
 
 const COLOR_PRESETS = [
   "#ef4444",
@@ -61,6 +59,7 @@ const COLOR_PRESETS = [
 ];
 
 export function CategoriesPage() {
+  const { t, i18n } = useTranslation("categories");
   const [filters, setFilters] = useState<GetCategoriesQuery>({
     scope: CategoryScope.All,
   });
@@ -79,32 +78,39 @@ export function CategoriesPage() {
 
   const categories = data?.data ?? [];
 
+  // Перераховуємо категорії при зміні мови, щоб getCategoryDisplayName отримував нову мову
+  const expenseCategories = useMemo(
+    () => categories.filter((c) => c.type === CategoryType.Expense),
+    [categories, i18n.language]
+  );
+  const incomeCategories = useMemo(
+    () => categories.filter((c) => c.type === CategoryType.Income),
+    [categories, i18n.language]
+  );
+
   return (
     <div className="space-y-6 p-4 md:p-8">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Категорії</h2>
-          <p className="text-muted-foreground">
-            Системні категорії доступні всім, власні — можна редагувати та
-            видаляти
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight">{t("title")}</h2>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <Button onClick={() => setCreateOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Нова категорія
+          {t("newCategory")}
         </Button>
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
         <div className="min-w-56 flex-1">
           <Label className="mb-1.5 block text-xs text-muted-foreground">
-            Пошук
+            {t("modal.name")}
           </Label>
           <div className="relative">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               className="pl-8"
-              placeholder="Назва категорії"
+              placeholder={t("searchPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -112,7 +118,7 @@ export function CategoriesPage() {
         </div>
         <div className="w-44">
           <Label className="mb-1.5 block text-xs text-muted-foreground">
-            Тип
+            {t("modal.type")}
           </Label>
           <Select
             value={filters.type ?? ""}
@@ -124,14 +130,14 @@ export function CategoriesPage() {
               }))
             }
           >
-            <option value="">Усі типи</option>
-            <option value={CategoryType.Expense}>Витрати</option>
-            <option value={CategoryType.Income}>Доходи</option>
+            <option value="">{t("types.all")}</option>
+            <option value={CategoryType.Expense}>{t("types.expenses")}</option>
+            <option value={CategoryType.Income}>{t("types.incomes")}</option>
           </Select>
         </div>
         <div className="w-44">
           <Label className="mb-1.5 block text-xs text-muted-foreground">
-            Походження
+            {t("scope.label")}
           </Label>
           <Select
             value={filters.scope ?? CategoryScope.All}
@@ -142,15 +148,15 @@ export function CategoriesPage() {
               }))
             }
           >
-            <option value={CategoryScope.All}>Усі</option>
-            <option value={CategoryScope.User}>Власні</option>
-            <option value={CategoryScope.System}>Системні</option>
+            <option value={CategoryScope.All}>{t("scope.all")}</option>
+            <option value={CategoryScope.User}>{t("scope.user")}</option>
+            <option value={CategoryScope.System}>{t("scope.system")}</option>
           </Select>
         </div>
       </div>
 
       {isLoading && (
-        <p className="text-sm text-muted-foreground">Завантаження…</p>
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
       )}
       {isError && (
         <p className="text-sm text-destructive">{getErrorMessage(error)}</p>
@@ -159,7 +165,7 @@ export function CategoriesPage() {
       {!isLoading && categories.length === 0 && (
         <Card>
           <CardContent className="flex h-40 items-center justify-center text-muted-foreground">
-            Категорій не знайдено.
+            {t("empty")}
           </CardContent>
         </Card>
       )}
@@ -168,17 +174,13 @@ export function CategoriesPage() {
         <div className="space-y-6">
           <CategorySection
             kind={CategoryType.Expense}
-            categories={categories.filter(
-              (c) => c.type === CategoryType.Expense,
-            )}
+            categories={expenseCategories}
             onEdit={setEditing}
             onDelete={setDeleting}
           />
           <CategorySection
             kind={CategoryType.Income}
-            categories={categories.filter(
-              (c) => c.type === CategoryType.Income,
-            )}
+            categories={incomeCategories}
             onEdit={setEditing}
             onDelete={setDeleting}
           />
@@ -213,16 +215,17 @@ export function CategoriesPage() {
 }
 
 function CategorySection({
-  kind,
-  categories,
-  onEdit,
-  onDelete,
-}: {
+                           kind,
+                           categories,
+                           onEdit,
+                           onDelete,
+                         }: {
   kind: CategoryType;
   categories: Category[];
   onEdit: (c: Category) => void;
   onDelete: (c: Category) => void;
 }) {
+  const { t } = useTranslation("categories");
   if (categories.length === 0) return null;
 
   const isExpense = kind === CategoryType.Expense;
@@ -242,7 +245,7 @@ function CategorySection({
       >
         <div className="flex items-center gap-2 font-semibold">
           <Icon className="h-4 w-4" />
-          {categoryTypePluralLabels[kind]}
+          {isExpense ? t("types.expenses") : t("types.incomes")}
         </div>
         <span className="text-sm opacity-70">{categories.length}</span>
       </div>
@@ -262,22 +265,23 @@ function CategorySection({
 }
 
 function CategoryItem({
-  category,
-  stripeClass,
-  onEdit,
-  onDelete,
-}: {
+                        category,
+                        stripeClass,
+                        onEdit,
+                        onDelete,
+                      }: {
   category: Category;
   stripeClass: string;
   onEdit: (c: Category) => void;
   onDelete: (c: Category) => void;
 }) {
+  const { t } = useTranslation("categories");
   const isSystem = category.scope === CategoryScope.System;
+
   return (
     <div className="group relative flex items-center gap-3 overflow-hidden rounded-lg border bg-card p-3 transition-colors hover:bg-accent/40">
       <span
         className={cn("absolute inset-y-0 left-0 w-1", stripeClass)}
-        aria-hidden
       />
       <div
         className="ml-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-md"
@@ -295,7 +299,7 @@ function CategoryItem({
           {isSystem && <Lock className="h-3 w-3 text-muted-foreground" />}
         </div>
         <div className="text-xs text-muted-foreground">
-          {isSystem ? "Системна" : "Власна"}
+          {isSystem ? t("scope.systemBadge") : t("scope.userBadge")}
         </div>
       </div>
       {!isSystem && (
@@ -321,16 +325,17 @@ function CategoryItem({
 }
 
 function CategoryFormDialog({
-  open,
-  mode,
-  initial,
-  onClose,
-}: {
+                              open,
+                              mode,
+                              initial,
+                              onClose,
+                            }: {
   open: boolean;
   mode: "create" | "edit";
   initial?: Category;
   onClose: () => void;
 }) {
+  const { t } = useTranslation(["categories", "common"]);
   const create = useCreateCategory();
   const update = useUpdateCategory(initial?._id ?? "");
   const mutation = mode === "create" ? create : update;
@@ -345,11 +350,11 @@ function CategoryFormDialog({
     resolver: zodResolver(categoryFormSchema),
     values: initial
       ? {
-          name: initial.name,
-          type: initial.type,
-          icon: initial.icon,
-          color: initial.color,
-        }
+        name: initial.name,
+        type: initial.type,
+        icon: initial.icon,
+        color: initial.color,
+      }
       : undefined,
     defaultValues: {
       name: "",
@@ -379,32 +384,38 @@ function CategoryFormDialog({
       <DialogContent onClose={close} className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Нова категорія" : "Редагування категорії"}
+            {mode === "create"
+              ? t("categories:modal.createTitle")
+              : t("categories:modal.editTitle")}
           </DialogTitle>
           <DialogDescription>
-            Оберіть назву, тип, іконку та колір
+            {t("categories:modal.description")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="cat-name">Назва</Label>
+              <Label htmlFor="cat-name">{t("categories:modal.name")}</Label>
               <Input
                 id="cat-name"
-                placeholder="Продукти"
+                placeholder={t("categories:modal.namePlaceholder")}
                 {...register("name")}
               />
-              {errors.name && (
+              {errors.name?.message && (
                 <p className="text-sm text-destructive">
-                  {errors.name.message}
+                  {t(`categories:${errors.name.message}` as any)}
                 </p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="cat-type">Тип</Label>
+              <Label htmlFor="cat-type">{t("categories:modal.type")}</Label>
               <Select id="cat-type" {...register("type")}>
-                <option value={CategoryType.Expense}>Витрата</option>
-                <option value={CategoryType.Income}>Дохід</option>
+                <option value={CategoryType.Expense}>
+                  {t("categories:types.expense")}
+                </option>
+                <option value={CategoryType.Income}>
+                  {t("categories:types.income")}
+                </option>
               </Select>
             </div>
           </div>
@@ -414,7 +425,7 @@ function CategoryFormDialog({
             name="icon"
             render={({ field }) => (
               <div className="space-y-2">
-                <Label>Іконка</Label>
+                <Label>{t("categories:modal.icon")}</Label>
                 <div className="grid max-h-48 grid-cols-7 gap-1.5 overflow-y-auto rounded-md border p-2">
                   {allIcons.map((iconName) => {
                     const isSelected = field.value === iconName;
@@ -423,7 +434,7 @@ function CategoryFormDialog({
                         key={iconName}
                         type="button"
                         onClick={() => field.onChange(iconName)}
-                        title={iconLabels[iconName]}
+                        title={getIconLabel(iconName)}
                         className={cn(
                           "flex h-9 items-center justify-center rounded-md border transition-colors",
                           isSelected
@@ -445,7 +456,7 @@ function CategoryFormDialog({
             name="color"
             render={({ field }) => (
               <div className="space-y-2">
-                <Label>Колір</Label>
+                <Label>{t("categories:modal.color")}</Label>
                 <div className="flex flex-wrap items-center gap-2">
                   {COLOR_PRESETS.map((color) => {
                     const isSelected =
@@ -473,9 +484,9 @@ function CategoryFormDialog({
                     onChange={(e) => field.onChange(e.target.value)}
                   />
                 </div>
-                {errors.color && (
+                {errors.color?.message && (
                   <p className="text-sm text-destructive">
-                    {errors.color.message}
+                    {t(`categories:${errors.color.message}` as any)}
                   </p>
                 )}
               </div>
@@ -490,14 +501,14 @@ function CategoryFormDialog({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={close}>
-              Скасувати
+              {t("common:buttons.cancel")}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending
-                ? "Збереження…"
+                ? t("categories:modal.submitting")
                 : mode === "create"
-                  ? "Створити"
-                  : "Зберегти"}
+                  ? t("categories:modal.createSubmit")
+                  : t("categories:modal.editSubmit")}
             </Button>
           </DialogFooter>
         </form>
@@ -507,39 +518,43 @@ function CategoryFormDialog({
 }
 
 function DeleteConfirmDialog({
-  category,
-  onCancel,
-  onConfirm,
-  loading,
-  error,
-}: {
+                               category,
+                               onCancel,
+                               onConfirm,
+                               loading,
+                               error,
+                             }: {
   category: Category | null;
   onCancel: () => void;
   onConfirm: () => void;
   loading: boolean;
   error: string | null;
 }) {
+  const { t } = useTranslation(["categories", "common"]);
+  const categoryName = category ? getCategoryDisplayName(category) : "";
+
   return (
     <Dialog open={category !== null} onOpenChange={(v) => !v && onCancel()}>
       <DialogContent onClose={onCancel}>
         <DialogHeader>
-          <DialogTitle>Видалити категорію?</DialogTitle>
+          <DialogTitle>{t("categories:deleteModal.title")}</DialogTitle>
           <DialogDescription>
-            Категорія «{category ? getCategoryDisplayName(category) : ""}»
-            буде видалена. Дію не можна скасувати.
+            {t("categories:deleteModal.description", { name: categoryName })}
           </DialogDescription>
         </DialogHeader>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <DialogFooter>
           <Button variant="outline" onClick={onCancel}>
-            Скасувати
+            {t("common:buttons.cancel")}
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
             disabled={loading}
           >
-            {loading ? "Видалення…" : "Видалити"}
+            {loading
+              ? t("categories:deleteModal.submitting")
+              : t("categories:deleteModal.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

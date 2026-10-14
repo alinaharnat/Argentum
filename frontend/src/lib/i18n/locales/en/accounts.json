@@ -1,0 +1,51 @@
+{
+  "title": "Accounts",
+  "subtitle": "Manage your wallets, bank, and savings accounts",
+  "addAccount": "Add account",
+  "filters": {
+    "type": "Type",
+    "allTypes": "All types",
+    "status": "Status",
+    "allStatuses": "All",
+    "active": "Active",
+    "archive": "Archived"
+  },
+  "types": {
+    "cash": "Cash",
+    "bank": "Bank",
+    "savings": "Savings"
+  },
+  "statusBadge": {
+    "archived": "archived"
+  },
+  "actions": {
+    "edit": "Edit",
+    "toArchive": "Archive",
+    "activate": "Activate"
+  },
+  "empty": "No accounts yet. Create your first one to start tracking.",
+  "loading": "Loading…",
+  "createModal": {
+    "title": "New account",
+    "description": "Enter a name, type, and optional initial balance",
+    "namePlaceholder": "PrivatBank Card",
+    "initialBalance": "Initial balance",
+    "currency": "Currency",
+    "submitting": "Creating…",
+    "submit": "Create"
+  },
+  "editModal": {
+    "title": "Edit account",
+    "description": "Balance updates are managed through transactions",
+    "submitting": "Saving…",
+    "submit": "Save"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "nameMax100": "Name must be at most 100 characters",
+    "nameMax50": "Name must be at most 50 characters",
+    "selectType": "Select an account type",
+    "balanceNumber": "Balance must be a number",
+    "currencyRegex": "Currency code must be 3 letters, e.g. UAH"
+  }
+}

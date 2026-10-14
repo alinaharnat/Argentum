@@ -1,0 +1,69 @@
+{
+  "title": "Транзакції",
+  "subtitle": "Усі ваші доходи та витрати з можливістю фільтрації",
+  "scanReceipt": "Сканувати чек",
+  "newTransaction": "Нова транзакція",
+  "noAccountsNotice": "Спочатку створіть рахунок на сторінці «Рахунки», щоб додавати транзакції.",
+  "empty": "Транзакцій не знайдено. Створіть першу або змініть фільтри.",
+  "loading": "Завантаження…",
+  "loadMore": "Завантажити ще",
+  "unknownCategory": "Невідома категорія",
+  "unknownAccount": "Невідомий рахунок",
+  "filterBar": {
+    "title": "Фільтри",
+    "type": "Тип",
+    "all": "Усі",
+    "expense": "Витрати",
+    "income": "Доходи",
+    "category": "Категорія",
+    "dateFrom": "Від (дата)",
+    "dateTo": "До (дата)",
+    "amountFrom": "Сума від",
+    "amountTo": "Сума до",
+    "sorting": "Сортування",
+    "sortDateDesc": "Дата (новіші)",
+    "sortDateAsc": "Дата (старіші)",
+    "sortAmountDesc": "Сума (більші)",
+    "sortAmountAsc": "Сума (менші)",
+    "reset": "Скинути"
+  },
+  "modal": {
+    "createTitle": "Нова транзакція",
+    "editTitle": "Редагування",
+    "description": "Введіть деталі операції — баланс рахунку оновиться автоматично",
+    "expense": "Витрата",
+    "income": "Дохід",
+    "amount": "Сума",
+    "date": "Дата",
+    "account": "Рахунок",
+    "selectAccount": "— Оберіть —",
+    "category": "Категорія",
+    "selectCategory": "— Оберіть —",
+    "noCategoryForType": "Немає категорій для цього типу",
+    "txDescription": "Опис (необовʼязково)",
+    "descriptionPlaceholder": "Покупка в АТБ",
+    "submitting": "Збереження…",
+    "createSubmit": "Створити",
+    "editSubmit": "Зберегти"
+  },
+  "deleteModal": {
+    "title": "Видалити транзакцію?",
+    "description": "{{category}} · {{amount}} — буде видалено, баланс рахунку відкоригується.",
+    "defaultCategory": "Транзакція",
+    "submitting": "Видалення…",
+    "submit": "Видалити"
+  },
+  "validation": {
+    "selectAccount": "Оберіть рахунок",
+    "selectCategory": "Оберіть категорію",
+    "selectType": "Оберіть тип",
+    "enterAmount": "Введіть суму",
+    "amountNumber": "Сума має бути числом, наприклад 199.99",
+    "selectDate": "Оберіть дату",
+    "descriptionMax": "Максимум 200 символів"
+  },
+  "dateLabels": {
+    "today": "Сьогодні",
+    "yesterday": "Вчора"
+  }
+}

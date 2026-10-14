@@ -2,12 +2,12 @@ import { z } from "zod";
 
 const amountLimitField = z
   .string()
-  .min(1, "Введіть суму")
-  .regex(/^\d+(\.\d{1,2})?$/, "Сума має бути числом, наприклад 5000")
-  .refine((value) => Number(value) > 0, "Сума має бути більше 0");
+  .min(1, "validation.enterAmount")
+  .regex(/^\d+(\.\d{1,2})?$/, "validation.amountNumber")
+  .refine((value) => Number(value) > 0, "validation.amountPositive");
 
 export const budgetCreateSchema = z.object({
-  categoryId: z.string().min(1, "Оберіть категорію"),
+  categoryId: z.string().min(1, "validation.selectCategory"),
   amountLimit: amountLimitField,
 });
 

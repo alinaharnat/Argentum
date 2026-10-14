@@ -1,0 +1,79 @@
+{
+  "title": "Фінансові цілі",
+  "subtitle": "Створюйте цілі та відстежуйте прогрес накопичення",
+  "newGoal": "Нова ціль",
+  "loading": "Завантаження…",
+  "tabs": {
+    "active": "Активні",
+    "completed": "Завершені",
+    "cancelled": "Скасовані"
+  },
+  "empty": {
+    "active": "Активних цілей ще немає.",
+    "completed": "Ще немає завершених цілей.",
+    "cancelled": "Скасованих цілей немає.",
+    "createFirst": "Створити першу ціль"
+  },
+  "statusLabels": {
+    "active": "Активна",
+    "completed": "Завершена",
+    "cancelled": "Скасована"
+  },
+  "card": {
+    "edit": "Редагувати ціль",
+    "cancel": "Скасувати ціль",
+    "fromTarget": "з {{target}}",
+    "accumulated": "{{percent}}% накопичено",
+    "achieved": "Досягнуто",
+    "remaining": "Залишилось {{amount}}",
+    "until": "до {{date}}",
+    "topUp": "Поповнити"
+  },
+  "deadline": {
+    "expired": "Дедлайн минув",
+    "today": "Дедлайн сьогодні",
+    "daysLeft_one": "Залишився {{count}} день",
+    "daysLeft_few": "Залишилось {{count}} дні",
+    "daysLeft_many": "Залишилось {{count}} днів",
+    "untilDate": "до {{date}}"
+  },
+  "modal": {
+    "createTitle": "Нова ціль",
+    "editTitle": "Редагування цілі",
+    "description": "Вкажіть назву, потрібну суму та, за бажанням, дедлайн",
+    "titleLabel": "Назва",
+    "titlePlaceholder": "Подушка безпеки",
+    "descriptionLabel": "Опис (необовʼязково)",
+    "descriptionPlaceholder": "Навіщо ця ціль",
+    "targetAmount": "Потрібна сума",
+    "currentAmount": "Вже накопичено",
+    "currency": "Валюта",
+    "targetDate": "Дедлайн (необовʼязково)",
+    "submitting": "Збереження…",
+    "createSubmit": "Створити",
+    "editSubmit": "Зберегти"
+  },
+  "topUpModal": {
+    "title": "Поповнити ціль",
+    "description": "Накопичено {{current}} із {{target}} · залишилось {{remaining}}",
+    "amountLabel": "Сума поповнення",
+    "submitting": "Збереження…",
+    "submit": "Поповнити"
+  },
+  "cancelModal": {
+    "title": "Скасувати ціль?",
+    "description": "Ціль «{{title}}» буде позначена як скасована. Її можна буде переглянути у вкладці «Скасовані».",
+    "back": "Назад",
+    "submitting": "Скасування…",
+    "submit": "Скасувати ціль"
+  },
+  "validation": {
+    "enterAmount": "Введіть суму",
+    "amountNumber": "Сума має бути числом, наприклад 50000",
+    "amountPositive": "Сума має бути більше 0",
+    "titleRequired": "Назва обовʼязкова",
+    "titleMax": "Назва має бути не більше 120 символів",
+    "descriptionMax": "Опис має бути не більше 500 символів",
+    "currencyRegex": "Код валюти — 3 літери, наприклад UAH"
+  }
+}

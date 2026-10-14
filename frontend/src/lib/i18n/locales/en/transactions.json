@@ -1,0 +1,69 @@
+{
+  "title": "Transactions",
+  "subtitle": "All your income and expenses with filtering capabilities",
+  "scanReceipt": "Scan receipt",
+  "newTransaction": "New transaction",
+  "noAccountsNotice": "Create an account on the 'Accounts' page first to add transactions.",
+  "empty": "No transactions found. Create your first one or change filters.",
+  "loading": "Loading…",
+  "loadMore": "Load more",
+  "unknownCategory": "Unknown category",
+  "unknownAccount": "Unknown account",
+  "filterBar": {
+    "title": "Filters",
+    "type": "Type",
+    "all": "All",
+    "expense": "Expenses",
+    "income": "Income",
+    "category": "Category",
+    "dateFrom": "From (date)",
+    "dateTo": "To (date)",
+    "amountFrom": "Amount from",
+    "amountTo": "Amount to",
+    "sorting": "Sorting",
+    "sortDateDesc": "Date (newest)",
+    "sortDateAsc": "Date (oldest)",
+    "sortAmountDesc": "Amount (highest)",
+    "sortAmountAsc": "Amount (lowest)",
+    "reset": "Reset"
+  },
+  "modal": {
+    "createTitle": "New transaction",
+    "editTitle": "Edit transaction",
+    "description": "Enter transaction details — account balance will update automatically",
+    "expense": "Expense",
+    "income": "Income",
+    "amount": "Amount",
+    "date": "Date",
+    "account": "Account",
+    "selectAccount": "— Select —",
+    "category": "Category",
+    "selectCategory": "— Select —",
+    "noCategoryForType": "No categories for this type",
+    "txDescription": "Description (optional)",
+    "descriptionPlaceholder": "Grocery shopping",
+    "submitting": "Saving…",
+    "createSubmit": "Create",
+    "editSubmit": "Save"
+  },
+  "deleteModal": {
+    "title": "Delete transaction?",
+    "description": "{{category}} · {{amount}} — will be deleted, account balance will be adjusted.",
+    "defaultCategory": "Transaction",
+    "submitting": "Deleting…",
+    "submit": "Delete"
+  },
+  "validation": {
+    "selectAccount": "Select an account",
+    "selectCategory": "Select a category",
+    "selectType": "Select a type",
+    "enterAmount": "Enter amount",
+    "amountNumber": "Amount must be a number, e.g. 199.99",
+    "selectDate": "Select a date",
+    "descriptionMax": "Maximum 200 characters"
+  },
+  "dateLabels": {
+    "today": "Today",
+    "yesterday": "Yesterday"
+  }
+}
